@@ -6,7 +6,7 @@ const os = require('os');
 const https = require('https');
 
 const command = process.argv[2];
-const PACKAGE_NAME = '@votruongdanh/ai-agent-skills';
+const PACKAGE_NAME = '@votruongdanh/skills';
 const CURRENT_VERSION = require('../package.json').version;
 
 // Check for updates
@@ -29,27 +29,76 @@ function checkForUpdates(callback) {
   }).on('error', () => callback()); // Silent fail
 }
 
-// Detect IDE type
+// Detect IDE type with expanded support
 function detectIDE() {
   const cwd = process.cwd();
+  const homeDir = os.homedir();
   
-  // Check for Kiro
-  if (fs.existsSync(path.join(cwd, '.kiro'))) return 'kiro';
+  // IDE detection map - order matters (most specific first)
+  const ideChecks = [
+    { name: 'antigravity', paths: ['.antigravity', '.ag'] },
+    { name: 'kiro', paths: ['.kiro'] },
+    { name: 'cursor', paths: ['.cursor'] },
+    { name: 'windsurf', paths: ['.windsurf'] },
+    { name: 'continue', paths: ['.continue'] },
+    { name: 'cody', paths: ['.cody'] },
+    { name: 'copilot', paths: ['.github/copilot'] },
+    { name: 'aider', paths: ['.aider'] },
+    { name: 'tabnine', paths: ['.tabnine'] },
+  ];
   
-  // Check for Cursor
-  if (fs.existsSync(path.join(cwd, '.cursor'))) return 'cursor';
-  
-  // Check for Windsurf
-  if (fs.existsSync(path.join(cwd, '.windsurf'))) return 'windsurf';
+  // Check current directory first
+  for (const ide of ideChecks) {
+    for (const idePath of ide.paths) {
+      if (fs.existsSync(path.join(cwd, idePath))) {
+        return ide.name;
+      }
+    }
+  }
   
   // Check home directory for global configs
-  const homeDir = os.homedir();
-  if (fs.existsSync(path.join(homeDir, '.kiro'))) return 'kiro';
-  if (fs.existsSync(path.join(homeDir, '.cursor'))) return 'cursor';
-  if (fs.existsSync(path.join(homeDir, '.windsurf'))) return 'windsurf';
+  for (const ide of ideChecks) {
+    for (const idePath of ide.paths) {
+      if (fs.existsSync(path.join(homeDir, idePath))) {
+        return ide.name;
+      }
+    }
+  }
   
-  // Default to Kiro (most common)
+  // Default to kiro (most common and compatible)
   return 'kiro';
+}
+
+// Get IDE display name
+function getIDEDisplayName(ide) {
+  const names = {
+    'antigravity': 'Antigravity',
+    'kiro': 'Kiro',
+    'cursor': 'Cursor',
+    'windsurf': 'Windsurf',
+    'continue': 'Continue',
+    'cody': 'Cody',
+    'copilot': 'GitHub Copilot',
+    'aider': 'Aider',
+    'tabnine': 'Tabnine'
+  };
+  return names[ide] || ide.charAt(0).toUpperCase() + ide.slice(1);
+}
+
+// Get IDE config directory
+function getIDEConfigDir(ide) {
+  const configDirs = {
+    'antigravity': '.antigravity',
+    'kiro': '.kiro',
+    'cursor': '.cursor',
+    'windsurf': '.windsurf',
+    'continue': '.continue',
+    'cody': '.cody',
+    'copilot': '.github/copilot',
+    'aider': '.aider',
+    'tabnine': '.tabnine'
+  };
+  return configDirs[ide] || `.${ide}`;
 }
 
 function copyDirectory(src, dest, options = {}) {
@@ -95,21 +144,23 @@ function getInstalledVersion(targetPath) {
 function init() {
   const cwd = process.cwd();
   const ide = detectIDE();
+  const ideDisplay = getIDEDisplayName(ide);
+  const ideConfigDir = getIDEConfigDir(ide);
   const skillsSource = path.join(__dirname, '..', '.kiro');
-  const skillsTarget = path.join(cwd, `.${ide}`);
+  const skillsTarget = path.join(cwd, ideConfigDir);
   const installedVersion = getInstalledVersion(skillsTarget);
   const isUpdate = installedVersion !== null;
 
   if (isUpdate) {
-    console.log(`🔄 Updating AI Agent Skills for ${ide.toUpperCase()}...`);
+    console.log(`🔄 Updating AI Agent Skills for ${ideDisplay}...`);
     console.log(`   ${installedVersion} → ${CURRENT_VERSION}\n`);
   } else {
-    console.log(`🚀 Installing AI Agent Skills for ${ide.toUpperCase()}...\n`);
+    console.log(`🚀 Installing AI Agent Skills for ${ideDisplay}...\n`);
   }
 
   try {
     if (fs.existsSync(skillsTarget) && !isUpdate) {
-      console.log(`⚠️  .${ide} folder already exists.`);
+      console.log(`⚠️  ${ideConfigDir} folder already exists.`);
       console.log('   Merging skills into existing folder...\n');
     }
 
@@ -123,7 +174,7 @@ function init() {
     } else {
       console.log('✅ Successfully installed AI Agent Skills!\n');
     }
-    console.log(`📦 Location: .${ide}/skills/\n`);
+    console.log(`📦 Location: ${ideConfigDir}/skills/\n`);
     console.log('📋 Available skills:');
     console.log('   • /brainstorm    - Ideation and feature exploration');
     console.log('   • /create        - Build new features and components');
@@ -137,7 +188,7 @@ function init() {
     console.log('   • /test          - Test strategy and coverage');
     console.log('   • /ui-ux-pro-max - UI/UX improvements and design\n');
     console.log('🎯 Next steps:');
-    console.log(`   1. Reopen your project in ${ide.charAt(0).toUpperCase() + ide.slice(1)}`);
+    console.log(`   1. Reopen your project in ${ideDisplay}`);
     console.log('   2. Type "/" in chat to see available skills');
     console.log('   3. Start using skills like /create, /debug, /enhance\n');
   } catch (error) {
@@ -149,10 +200,12 @@ function init() {
 function installGlobal() {
   const homeDir = os.homedir();
   const ide = detectIDE();
-  const globalSkillsPath = path.join(homeDir, `.${ide}`, 'skills');
+  const ideDisplay = getIDEDisplayName(ide);
+  const ideConfigDir = getIDEConfigDir(ide);
+  const globalSkillsPath = path.join(homeDir, ideConfigDir, 'skills');
   const skillsSource = path.join(__dirname, '..', '.kiro', 'skills');
 
-  console.log(`🌍 Installing AI Agent Skills globally for ${ide.toUpperCase()}...\n`);
+  console.log(`🌍 Installing AI Agent Skills globally for ${ideDisplay}...\n`);
 
   try {
     if (!fs.existsSync(globalSkillsPath)) {
@@ -164,7 +217,7 @@ function installGlobal() {
     console.log('✅ Successfully installed skills globally!\n');
     console.log('📍 Location: ' + globalSkillsPath + '\n');
     console.log('🎯 Next steps:');
-    console.log(`   1. Restart ${ide.charAt(0).toUpperCase() + ide.slice(1)}`);
+    console.log(`   1. Restart ${ideDisplay}`);
     console.log('   2. Skills will be available in all projects\n');
   } catch (error) {
     console.error('❌ Error installing global skills:', error.message);
@@ -174,18 +227,24 @@ function installGlobal() {
 
 function showHelp() {
   console.log(`
-AI Agent Skills CLI - Universal skills for Kiro, Cursor, Windsurf & more
+AI Agent Skills CLI - Universal skills for AI-powered IDEs
 
 Usage:
-  npx @votruongdanh/ai-agent-skills init       Install skills in current project
-  npx @votruongdanh/ai-agent-skills global     Install skills globally
-  npx @votruongdanh/ai-agent-skills help       Show this help message
+  npx @votruongdanh/skills init       Install skills in current project
+  npx @votruongdanh/skills global     Install skills globally
+  npx @votruongdanh/skills help       Show this help message
 
-Supported IDEs:
-  ✅ Kiro      - Automatically detected
-  ✅ Cursor    - Automatically detected
-  ✅ Windsurf  - Automatically detected
-  ✅ Others    - Uses Kiro format by default
+Supported IDEs (Auto-detected):
+  ✅ Antigravity    - .antigravity or .ag folder
+  ✅ Kiro           - .kiro folder
+  ✅ Cursor         - .cursor folder
+  ✅ Windsurf       - .windsurf folder
+  ✅ Continue       - .continue folder
+  ✅ Cody           - .cody folder
+  ✅ GitHub Copilot - .github/copilot folder
+  ✅ Aider          - .aider folder
+  ✅ Tabnine        - .tabnine folder
+  ✅ Others         - Uses Kiro format by default
 
 Available Skills:
   /brainstorm    - Ideation and feature exploration
@@ -200,7 +259,7 @@ Available Skills:
   /test          - Test strategy and coverage
   /ui-ux-pro-max - UI/UX improvements and design
 
-Documentation: https://github.com/votruongdanh/ai-agent-skills
+Documentation: https://github.com/votruongdanh/skills
 `);
 }
 

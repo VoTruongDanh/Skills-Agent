@@ -2,7 +2,7 @@
 
 Professional AI agent skills for Kiro, Cursor, Windsurf, and other AI-powered IDEs. 11 battle-tested workflows to supercharge your development.
 
-[![npm version](https://img.shields.io/npm/v/@votruongdanh/ai-agent-skills.svg)](https://www.npmjs.com/package/@votruongdanh/ai-agent-skills)
+[![npm version](https://img.shields.io/npm/v/@votruongdanh/skills.svg)](https://www.npmjs.com/package/@votruongdanh/skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## ⚡ Quick Install
@@ -10,19 +10,27 @@ Professional AI agent skills for Kiro, Cursor, Windsurf, and other AI-powered ID
 One command, works everywhere:
 
 ```bash
-npx @votruongdanh/ai-agent-skills init
+npx @votruongdanh/skills init
 ```
 
 That's it! No need to clone repos or download files.
 
 ## 🎯 Supported IDEs
 
-✅ **Kiro** - Auto-detected  
-✅ **Cursor** - Auto-detected  
-✅ **Windsurf** - Auto-detected  
-✅ **Others** - Uses Kiro format
+The CLI automatically detects your IDE and installs to the correct location:
 
-The CLI automatically detects your IDE and installs to the right location.
+✅ **Antigravity** - `.antigravity/` or `.ag/`  
+✅ **Kiro** - `.kiro/`  
+✅ **Cursor** - `.cursor/`  
+✅ **Windsurf** - `.windsurf/`  
+✅ **Continue** - `.continue/`  
+✅ **Cody** - `.cody/`  
+✅ **GitHub Copilot** - `.github/copilot/`  
+✅ **Aider** - `.aider/`  
+✅ **Tabnine** - `.tabnine/`  
+✅ **Others** - Uses Kiro format (most compatible)
+
+No configuration needed - just run the install command!
 
 ## 📦 11 Professional Skills
 
@@ -54,21 +62,23 @@ The CLI automatically detects your IDE and installs to the right location.
 ### Project-specific (Recommended)
 ```bash
 cd your-project
-npx @votruongdanh/ai-agent-skills init
+npx @votruongdanh/skills init
 ```
 
 ### Global (All projects)
 ```bash
-npx @votruongdanh/ai-agent-skills global
+npx @votruongdanh/skills global
 ```
 
 ## 🔧 How It Works
 
-1. Run the npx command
-2. CLI detects your IDE automatically
-3. Skills installed to `.kiro/`, `.cursor/`, or `.windsurf/`
+1. Run `npx @votruongdanh/ai-agent-skills init`
+2. CLI automatically detects your IDE (Antigravity, Kiro, Cursor, etc.)
+3. Skills installed to the correct config folder
 4. Restart your IDE
-5. Type `/` in chat to see skills
+5. Type `/` in chat to see available skills
+
+Works with 9+ AI-powered IDEs out of the box!
 
 ## ⚙️ Customization
 
@@ -94,7 +104,7 @@ code .windsurf/skills/create/SKILL.md
 The CLI automatically checks for updates and notifies you. To update:
 
 ```bash
-npx @votruongdanh/ai-agent-skills@latest init
+npx @votruongdanh/skills@latest init
 ```
 
 **Smart Update Features:**
@@ -114,7 +124,7 @@ GitHub: [@votruongdanh](https://github.com/votruongdanh)
 
 ## 🤝 Contributing
 
-Issues and PRs welcome at [GitHub](https://github.com/votruongdanh/ai-agent-skills)
+Issues and PRs welcome at [GitHub](https://github.com/votruongdanh/skills)
 
 ## 🌟 Inspired By
 
