@@ -1,6 +1,6 @@
 {
   "name": "@votruongdanh/ai-agent-skills",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Professional AI Agent Skills - 11 powerful workflows for Antigravity, Kiro, Cursor, Windsurf, Continue, Cody, and other AI IDEs",
   "main": "index.js",
   "bin": {
