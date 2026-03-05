@@ -1,6 +1,6 @@
 # 🚀 AI Agent Skills
 
-Professional AI agent skills for Kiro, Cursor, Windsurf, and other AI-powered IDEs. 11 battle-tested workflows to supercharge your development.
+Professional AI agent skills for Kiro, Cursor, Antigravity, and other AI-powered IDEs. 12 battle-tested workflows to supercharge your development.
 
 [![npm version](https://img.shields.io/npm/v/@votruongdanh/ai-agent-skills.svg)](https://www.npmjs.com/package/@votruongdanh/ai-agent-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -32,11 +32,12 @@ The CLI automatically detects your IDE and installs to the correct location:
 
 No configuration needed - just run the install command!
 
-## 📦 11 Professional Skills
+## 📦 12 Professional Skills
 
 | Skill | Command | Use Case |
 |-------|---------|----------|
 | **Brainstorm** | `/brainstorm` | Generate ideas and explore features |
+| **Clean** | `/clean` | Remove junk files and AI artifacts |
 | **Create** | `/create` | Build new features from scratch |
 | **Debug** | `/debug` | Find and fix bugs systematically |
 | **Deploy** | `/deploy` | Deployment and CI/CD guidance |

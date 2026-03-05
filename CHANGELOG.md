@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.5.0] - 2026-03-05
+
+### Added
+- **New Skill: Clean** - Remove junk files, temporary files, AI-generated artifacts, and cache
+- Full support for Cursor IDE with `.cursor/rules/*.mdc` format
+- Full support for Antigravity IDE with `.agent/rules/*.md` format
+- Multi-IDE compatibility layer for all 12 skills
+
+### Enhanced
+- Updated README with 12 skills (added Clean)
+- Improved package.json to include `.cursor` and `.agent` directories
+- Better cross-IDE compatibility
+
+### Skills Now Include
+- brainstorm, clean (NEW), create, debug, deploy, enhance, orchestrate, plan, preview, status, test, ui-ux-pro-max
+
 ## [1.0.0] - 2026-03-05
 
 ### Added

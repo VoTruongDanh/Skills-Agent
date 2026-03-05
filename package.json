@@ -1,7 +1,7 @@
 {
   "name": "@votruongdanh/ai-agent-skills",
-  "version": "1.4.0",
-  "description": "Professional AI Agent Skills - 11 powerful workflows for Antigravity, Kiro, Cursor, Windsurf, Continue, Cody, and other AI IDEs",
+  "version": "1.5.0",
+  "description": "Professional AI Agent Skills - 12 powerful workflows for Antigravity, Kiro, Cursor, Windsurf, Continue, Cody, and other AI IDEs",
   "main": "index.js",
   "bin": {
     "ai-skills": "bin/cli.js"
@@ -47,6 +47,8 @@
   "homepage": "https://github.com/votruongdanh/ai-agent-skills#readme",
   "files": [
     ".kiro",
+    ".cursor",
+    ".agent",
     "bin",
     "index.js",
     "README.md"
