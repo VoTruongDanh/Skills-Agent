@@ -14,3 +14,8 @@ test/
 
 # Documentation drafts
 docs/drafts/
+
+# Maintainer docs (not for end users)
+PUBLISH.md
+CONTRIBUTING.md
+verify.js

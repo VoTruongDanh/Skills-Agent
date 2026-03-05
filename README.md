@@ -85,11 +85,23 @@ code .cursor/skills/create/SKILL.md
 code .windsurf/skills/create/SKILL.md
 ```
 
+**Note:** Updates will overwrite skill files. To preserve customizations:
+1. Backup your modified skills before updating
+2. Or create custom skills with different names
+
 ## 🔄 Updates
+
+The CLI automatically checks for updates and notifies you. To update:
 
 ```bash
 npx @votruongdanh/ai-agent-skills@latest init
 ```
+
+**Smart Update Features:**
+- ✅ Auto-detects installed version
+- ✅ Shows version comparison
+- ✅ Preserves your customizations (optional)
+- ✅ Works across all supported IDEs
 
 ## 📄 License
 
@@ -103,6 +115,10 @@ GitHub: [@votruongdanh](https://github.com/votruongdanh)
 ## 🤝 Contributing
 
 Issues and PRs welcome at [GitHub](https://github.com/votruongdanh/ai-agent-skills)
+
+## 🌟 Inspired By
+
+This project is inspired by [Antigravity Kit](https://github.com/vudovn/antigravity-kit) - A collection of powerful AI development tools.
 
 ---
 

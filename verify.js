@@ -53,7 +53,7 @@ const checks = [
     name: 'package.json has correct bin field',
     test: () => {
       const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-      return pkg.bin && (pkg.bin['kiro-skills'] === './bin/cli.js' || pkg.bin['ai-skills'] === './bin/cli.js');
+      return pkg.bin && (pkg.bin['kiro-skills'] === 'bin/cli.js' || pkg.bin['ai-skills'] === 'bin/cli.js');
     }
   },
   {

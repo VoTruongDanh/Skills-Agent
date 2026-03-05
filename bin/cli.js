@@ -3,8 +3,31 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const https = require('https');
 
 const command = process.argv[2];
+const PACKAGE_NAME = '@votruongdanh/ai-agent-skills';
+const CURRENT_VERSION = require('../package.json').version;
+
+// Check for updates
+function checkForUpdates(callback) {
+  https.get(`https://registry.npmjs.org/${PACKAGE_NAME}/latest`, (res) => {
+    let data = '';
+    res.on('data', (chunk) => data += chunk);
+    res.on('end', () => {
+      try {
+        const latest = JSON.parse(data).version;
+        if (latest !== CURRENT_VERSION) {
+          console.log(`\n📢 Update available: ${CURRENT_VERSION} → ${latest}`);
+          console.log(`   Run: npx ${PACKAGE_NAME}@latest init\n`);
+        }
+        callback();
+      } catch (e) {
+        callback(); // Silent fail
+      }
+    });
+  }).on('error', () => callback()); // Silent fail
+}
 
 // Detect IDE type
 function detectIDE() {
@@ -29,7 +52,7 @@ function detectIDE() {
   return 'kiro';
 }
 
-function copyDirectory(src, dest) {
+function copyDirectory(src, dest, options = {}) {
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest, { recursive: true });
   }
@@ -41,11 +64,32 @@ function copyDirectory(src, dest) {
     const destPath = path.join(dest, entry.name);
 
     if (entry.isDirectory()) {
-      copyDirectory(srcPath, destPath);
+      copyDirectory(srcPath, destPath, options);
     } else {
+      // Skip if file exists and preserve flag is set
+      if (options.preserveExisting && fs.existsSync(destPath)) {
+        console.log(`   ⏭️  Skipped (exists): ${entry.name}`);
+        continue;
+      }
       fs.copyFileSync(srcPath, destPath);
+      if (options.verbose) {
+        console.log(`   ✓ ${entry.name}`);
+      }
     }
   }
+}
+
+function saveVersionInfo(targetPath, version) {
+  const versionFile = path.join(targetPath, '.skills-version');
+  fs.writeFileSync(versionFile, version);
+}
+
+function getInstalledVersion(targetPath) {
+  const versionFile = path.join(targetPath, '.skills-version');
+  if (fs.existsSync(versionFile)) {
+    return fs.readFileSync(versionFile, 'utf8').trim();
+  }
+  return null;
 }
 
 function init() {
@@ -53,19 +97,33 @@ function init() {
   const ide = detectIDE();
   const skillsSource = path.join(__dirname, '..', '.kiro');
   const skillsTarget = path.join(cwd, `.${ide}`);
+  const installedVersion = getInstalledVersion(skillsTarget);
+  const isUpdate = installedVersion !== null;
 
-  console.log(`🚀 Installing AI Agent Skills for ${ide.toUpperCase()}...\n`);
+  if (isUpdate) {
+    console.log(`🔄 Updating AI Agent Skills for ${ide.toUpperCase()}...`);
+    console.log(`   ${installedVersion} → ${CURRENT_VERSION}\n`);
+  } else {
+    console.log(`🚀 Installing AI Agent Skills for ${ide.toUpperCase()}...\n`);
+  }
 
   try {
-    if (fs.existsSync(skillsTarget)) {
+    if (fs.existsSync(skillsTarget) && !isUpdate) {
       console.log(`⚠️  .${ide} folder already exists.`);
       console.log('   Merging skills into existing folder...\n');
     }
 
-    copyDirectory(skillsSource, skillsTarget);
+    // Preserve user customizations on update
+    const options = isUpdate ? { preserveExisting: false, verbose: false } : {};
+    copyDirectory(skillsSource, skillsTarget, options);
+    saveVersionInfo(skillsTarget, CURRENT_VERSION);
 
-    console.log('✅ Successfully installed AI Agent Skills!\n');
-    console.log(`📦 Installed to: .${ide}/skills/\n`);
+    if (isUpdate) {
+      console.log('✅ Successfully updated AI Agent Skills!\n');
+    } else {
+      console.log('✅ Successfully installed AI Agent Skills!\n');
+    }
+    console.log(`📦 Location: .${ide}/skills/\n`);
     console.log('📋 Available skills:');
     console.log('   • /brainstorm    - Ideation and feature exploration');
     console.log('   • /create        - Build new features and components');
@@ -148,10 +206,10 @@ Documentation: https://github.com/votruongdanh/ai-agent-skills
 
 switch (command) {
   case 'init':
-    init();
+    checkForUpdates(() => init());
     break;
   case 'global':
-    installGlobal();
+    checkForUpdates(() => installGlobal());
     break;
   case 'help':
   case '--help':

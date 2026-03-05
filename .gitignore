@@ -22,3 +22,6 @@ build/
 # Misc
 .env
 .env.local
+
+# npm credentials (IMPORTANT: Never commit tokens!)
+.npmrc

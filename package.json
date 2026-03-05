@@ -4,10 +4,13 @@
   "description": "Professional AI Agent Skills - 11 powerful workflows for Kiro, Cursor, Windsurf, and other AI IDEs",
   "main": "index.js",
   "bin": {
-    "ai-skills": "./bin/cli.js"
+    "ai-skills": "bin/cli.js"
   },
   "scripts": {
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0",
+    "release:patch": "npm version patch && git push --follow-tags && npm publish --access public",
+    "release:minor": "npm version minor && git push --follow-tags && npm publish --access public",
+    "release:major": "npm version major && git push --follow-tags && npm publish --access public"
   },
   "keywords": [
     "kiro",
