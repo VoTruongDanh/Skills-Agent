@@ -36,7 +36,7 @@ function detectIDE() {
   
   // IDE detection map - order matters (most specific first)
   const ideChecks = [
-    { name: 'antigravity', paths: ['.antigravity', '.ag'] },
+    { name: 'antigravity', paths: ['agent/skills', 'agent'] }, // Antigravity uses agent/ not .antigravity/
     { name: 'kiro', paths: ['.kiro'] },
     { name: 'cursor', paths: ['.cursor'] },
     { name: 'windsurf', paths: ['.windsurf'] },
@@ -88,7 +88,7 @@ function getIDEDisplayName(ide) {
 // Get IDE config directory
 function getIDEConfigDir(ide) {
   const configDirs = {
-    'antigravity': '.antigravity',
+    'antigravity': 'agent', // Antigravity uses agent/ folder
     'kiro': '.kiro',
     'cursor': '.cursor',
     'windsurf': '.windsurf',
@@ -235,15 +235,15 @@ Usage:
   npx @votruongdanh/ai-agent-skills help       Show this help message
 
 Supported IDEs (Auto-detected):
-  ✅ Antigravity    - .antigravity or .ag folder
-  ✅ Kiro           - .kiro folder
-  ✅ Cursor         - .cursor folder
-  ✅ Windsurf       - .windsurf folder
-  ✅ Continue       - .continue folder
-  ✅ Cody           - .cody folder
-  ✅ GitHub Copilot - .github/copilot folder
-  ✅ Aider          - .aider folder
-  ✅ Tabnine        - .tabnine folder
+  ✅ Antigravity    - agent/skills folder
+  ✅ Kiro           - .kiro/skills folder
+  ✅ Cursor         - .cursor/skills folder
+  ✅ Windsurf       - .windsurf/skills folder
+  ✅ Continue       - .continue/skills folder
+  ✅ Cody           - .cody/skills folder
+  ✅ GitHub Copilot - .github/copilot/skills folder
+  ✅ Aider          - .aider/skills folder
+  ✅ Tabnine        - .tabnine/skills folder
   ✅ Others         - Uses Kiro format by default
 
 Available Skills:

@@ -19,15 +19,15 @@ That's it! No need to clone repos or download files.
 
 The CLI automatically detects your IDE and installs to the correct location:
 
-✅ **Antigravity** - `.antigravity/` or `.ag/`  
-✅ **Kiro** - `.kiro/`  
-✅ **Cursor** - `.cursor/`  
-✅ **Windsurf** - `.windsurf/`  
-✅ **Continue** - `.continue/`  
-✅ **Cody** - `.cody/`  
-✅ **GitHub Copilot** - `.github/copilot/`  
-✅ **Aider** - `.aider/`  
-✅ **Tabnine** - `.tabnine/`  
+✅ **Antigravity** - `agent/skills/`  
+✅ **Kiro** - `.kiro/skills/`  
+✅ **Cursor** - `.cursor/skills/`  
+✅ **Windsurf** - `.windsurf/skills/`  
+✅ **Continue** - `.continue/skills/`  
+✅ **Cody** - `.cody/skills/`  
+✅ **GitHub Copilot** - `.github/copilot/skills/`  
+✅ **Aider** - `.aider/skills/`  
+✅ **Tabnine** - `.tabnine/skills/`  
 ✅ **Others** - Uses Kiro format (most compatible)
 
 No configuration needed - just run the install command!
