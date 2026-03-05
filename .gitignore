@@ -25,3 +25,9 @@ build/
 
 # npm credentials (IMPORTANT: Never commit tokens!)
 .npmrc
+
+# Maintainer docs (keep in repo, but listed here for clarity)
+# UPDATE.md - How to update and publish
+# PUBLISH.md - Initial publish guide
+# verify.js - Pre-publish verification
+
