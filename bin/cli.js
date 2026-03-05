@@ -6,7 +6,7 @@ const os = require('os');
 const https = require('https');
 
 const command = process.argv[2];
-const PACKAGE_NAME = '@votruongdanh/skills';
+const PACKAGE_NAME = '@votruongdanh/ai-agent-skills';
 const CURRENT_VERSION = require('../package.json').version;
 
 // Check for updates
@@ -230,9 +230,9 @@ function showHelp() {
 AI Agent Skills CLI - Universal skills for AI-powered IDEs
 
 Usage:
-  npx @votruongdanh/skills init       Install skills in current project
-  npx @votruongdanh/skills global     Install skills globally
-  npx @votruongdanh/skills help       Show this help message
+  npx @votruongdanh/ai-agent-skills init       Install skills in current project
+  npx @votruongdanh/ai-agent-skills global     Install skills globally
+  npx @votruongdanh/ai-agent-skills help       Show this help message
 
 Supported IDEs (Auto-detected):
   ✅ Antigravity    - .antigravity or .ag folder
@@ -259,7 +259,7 @@ Available Skills:
   /test          - Test strategy and coverage
   /ui-ux-pro-max - UI/UX improvements and design
 
-Documentation: https://github.com/votruongdanh/skills
+Documentation: https://github.com/votruongdanh/ai-agent-skills
 `);
 }
 

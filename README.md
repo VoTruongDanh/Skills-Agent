@@ -2,7 +2,7 @@
 
 Professional AI agent skills for Kiro, Cursor, Windsurf, and other AI-powered IDEs. 11 battle-tested workflows to supercharge your development.
 
-[![npm version](https://img.shields.io/npm/v/@votruongdanh/skills.svg)](https://www.npmjs.com/package/@votruongdanh/skills)
+[![npm version](https://img.shields.io/npm/v/@votruongdanh/ai-agent-skills.svg)](https://www.npmjs.com/package/@votruongdanh/ai-agent-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## ⚡ Quick Install
@@ -10,7 +10,7 @@ Professional AI agent skills for Kiro, Cursor, Windsurf, and other AI-powered ID
 One command, works everywhere:
 
 ```bash
-npx @votruongdanh/skills init
+npx @votruongdanh/ai-agent-skills init
 ```
 
 That's it! No need to clone repos or download files.
@@ -62,12 +62,12 @@ No configuration needed - just run the install command!
 ### Project-specific (Recommended)
 ```bash
 cd your-project
-npx @votruongdanh/skills init
+npx @votruongdanh/ai-agent-skills init
 ```
 
 ### Global (All projects)
 ```bash
-npx @votruongdanh/skills global
+npx @votruongdanh/ai-agent-skills global
 ```
 
 ## 🔧 How It Works
@@ -104,7 +104,7 @@ code .windsurf/skills/create/SKILL.md
 The CLI automatically checks for updates and notifies you. To update:
 
 ```bash
-npx @votruongdanh/skills@latest init
+npx @votruongdanh/ai-agent-skills@latest init
 ```
 
 **Smart Update Features:**
@@ -124,7 +124,7 @@ GitHub: [@votruongdanh](https://github.com/votruongdanh)
 
 ## 🤝 Contributing
 
-Issues and PRs welcome at [GitHub](https://github.com/votruongdanh/skills)
+Issues and PRs welcome at [GitHub](https://github.com/votruongdanh/ai-agent-skills)
 
 ## 🌟 Inspired By
 

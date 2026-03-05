@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-  name: '@votruongdanh/skills',
+  name: '@votruongdanh/ai-agent-skills',
   version: require('./package.json').version,
   author: 'Vo Truong Danh (votruongdanh)',
   skills: [
