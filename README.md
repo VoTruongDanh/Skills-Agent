@@ -50,6 +50,17 @@ No configuration needed - just run the install command!
 
 ## 💡 Usage Examples
 
+```bash
+# Auto-detect IDE (recommended)
+npx @votruongdanh/ai-agent-skills init
+
+# Force specific IDE
+npx @votruongdanh/ai-agent-skills init --ide=antigravity
+npx @votruongdanh/ai-agent-skills init --ide=cursor
+npx @votruongdanh/ai-agent-skills init --ide=kiro
+```
+
+**In your IDE:**
 ```
 /create Add user authentication with JWT
 /debug Login form not submitting on mobile
@@ -61,14 +72,22 @@ No configuration needed - just run the install command!
 
 ### Project-specific (Recommended)
 ```bash
+# Auto-detect your IDE
 cd your-project
 npx @votruongdanh/ai-agent-skills init
+
+# Or specify IDE manually
+npx @votruongdanh/ai-agent-skills init --ide=antigravity
+npx @votruongdanh/ai-agent-skills init --ide=cursor
+npx @votruongdanh/ai-agent-skills init --ide=windsurf
 ```
 
 ### Global (All projects)
 ```bash
 npx @votruongdanh/ai-agent-skills global
 ```
+
+**Tip:** If auto-detection doesn't work, use `--ide=<name>` to specify your IDE manually.
 
 ## 🔧 How It Works
 

@@ -6,6 +6,7 @@ const os = require('os');
 const https = require('https');
 
 const command = process.argv[2];
+const ideFlag = process.argv[3]; // Support --ide=<name> flag
 const PACKAGE_NAME = '@votruongdanh/ai-agent-skills';
 const CURRENT_VERSION = require('../package.json').version;
 
@@ -29,8 +30,31 @@ function checkForUpdates(callback) {
   }).on('error', () => callback()); // Silent fail
 }
 
+// Parse IDE from command line flag
+function parseIDEFlag() {
+  const args = process.argv.slice(2);
+  for (const arg of args) {
+    if (arg.startsWith('--ide=')) {
+      return arg.split('=')[1].toLowerCase();
+    }
+  }
+  return null;
+}
+
 // Detect IDE type with expanded support
 function detectIDE() {
+  // Check if user specified IDE via flag
+  const manualIDE = parseIDEFlag();
+  if (manualIDE) {
+    const validIDEs = ['antigravity', 'kiro', 'cursor', 'windsurf', 'continue', 'cody', 'copilot', 'aider', 'tabnine'];
+    if (validIDEs.includes(manualIDE)) {
+      console.log(`📌 Using manually specified IDE: ${getIDEDisplayName(manualIDE)}\n`);
+      return manualIDE;
+    } else {
+      console.log(`⚠️  Unknown IDE: ${manualIDE}. Auto-detecting...\n`);
+    }
+  }
+  
   const cwd = process.cwd();
   const homeDir = os.homedir();
   
@@ -51,6 +75,7 @@ function detectIDE() {
   for (const ide of ideChecks) {
     for (const idePath of ide.paths) {
       if (fs.existsSync(path.join(cwd, idePath))) {
+        console.log(`🔍 Auto-detected: ${getIDEDisplayName(ide.name)} (found ${idePath}/)\n`);
         return ide.name;
       }
     }
@@ -60,12 +85,14 @@ function detectIDE() {
   for (const ide of ideChecks) {
     for (const idePath of ide.paths) {
       if (fs.existsSync(path.join(homeDir, idePath))) {
+        console.log(`🔍 Auto-detected: ${getIDEDisplayName(ide.name)} (found ~/${idePath}/)\n`);
         return ide.name;
       }
     }
   }
   
   // Default to kiro (most common and compatible)
+  console.log(`ℹ️  No IDE detected. Using Kiro format (most compatible)\n`);
   return 'kiro';
 }
 
@@ -230,9 +257,15 @@ function showHelp() {
 AI Agent Skills CLI - Universal skills for AI-powered IDEs
 
 Usage:
-  npx @votruongdanh/ai-agent-skills init       Install skills in current project
-  npx @votruongdanh/ai-agent-skills global     Install skills globally
-  npx @votruongdanh/ai-agent-skills help       Show this help message
+  npx @votruongdanh/ai-agent-skills init                    Install skills (auto-detect IDE)
+  npx @votruongdanh/ai-agent-skills init --ide=<name>       Install for specific IDE
+  npx @votruongdanh/ai-agent-skills global                  Install skills globally
+  npx @votruongdanh/ai-agent-skills help                    Show this help message
+
+Examples:
+  npx @votruongdanh/ai-agent-skills init --ide=antigravity  Force install for Antigravity
+  npx @votruongdanh/ai-agent-skills init --ide=cursor       Force install for Cursor
+  npx @votruongdanh/ai-agent-skills init --ide=kiro         Force install for Kiro
 
 Supported IDEs (Auto-detected):
   ✅ Antigravity    - agent/skills folder
