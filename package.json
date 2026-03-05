@@ -1,0 +1,49 @@
+{
+  "name": "@votruongdanh/ai-agent-skills",
+  "version": "1.0.0",
+  "description": "Professional AI Agent Skills - 11 powerful workflows for Kiro, Cursor, Windsurf, and other AI IDEs",
+  "main": "index.js",
+  "bin": {
+    "ai-skills": "./bin/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "kiro",
+    "cursor",
+    "windsurf",
+    "ai",
+    "agent",
+    "skills",
+    "ide",
+    "development",
+    "workflow",
+    "automation",
+    "productivity",
+    "copilot"
+  ],
+  "author": {
+    "name": "Vo Truong Danh",
+    "email": "votruongdanh@example.com",
+    "url": "https://github.com/votruongdanh"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/votruongdanh/ai-agent-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/votruongdanh/ai-agent-skills/issues"
+  },
+  "homepage": "https://github.com/votruongdanh/ai-agent-skills#readme",
+  "files": [
+    ".kiro",
+    "bin",
+    "index.js",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

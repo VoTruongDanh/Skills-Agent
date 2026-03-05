@@ -1,0 +1,16 @@
+# Development files
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+# Test files
+test/
+*.test.js
+
+# Git
+.git/
+.gitignore
+
+# Documentation drafts
+docs/drafts/
