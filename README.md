@@ -1,6 +1,6 @@
 # AI Agent Skills
 
-Cross-IDE AI agent skills with one canonical `SKILL.md` source and installers that render the right layout for each IDE.
+Cross-IDE AI agent skills with dual-source `SKILL.md` discovery and installers that render the right layout for each IDE.
 
 [![npm version](https://img.shields.io/npm/v/@votruongdanh/ai-agent-skills.svg)](https://www.npmjs.com/package/@votruongdanh/ai-agent-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -44,6 +44,8 @@ The installer now writes IDE-specific layouts instead of copying `.kiro` everywh
 | VS Code / GitHub Copilot | `.github/skills/<skill>/SKILL.md` | Native agent skills |
 | Global Copilot | `~/.copilot/skills/<skill>/SKILL.md` | Used by `global` install |
 
+Native skill targets keep the full skill directory. Generated compatibility targets such as Cursor `.mdc` rules and Antigravity workflows only render `SKILL.md` content, so companion `scripts/`, `references/`, and `assets/` remain native-only.
+
 ## Available skills
 
 - `/brainstorm`
@@ -70,6 +72,8 @@ npx @votruongdanh/ai-agent-skills init --ide=vscode
 npx @votruongdanh/ai-agent-skills init --ide=copilot
 npx @votruongdanh/ai-agent-skills init --ide=generic
 npx @votruongdanh/ai-agent-skills global
+npx @votruongdanh/ai-agent-skills list
+npx @votruongdanh/ai-agent-skills list --json
 ```
 
 Recommended:
@@ -77,14 +81,28 @@ Recommended:
 - Use `npx @votruongdanh/ai-agent-skills init` for normal online install.
 - Use `--ide=<name>` only when auto-detect picks the wrong target.
 - If you run the command from a nested folder, the CLI will try to install at the detected workspace root.
+- Use `npx @votruongdanh/ai-agent-skills list` to inspect bundled skills before installing them.
 - Ignore the PowerShell wrapper unless you specifically want a Windows shortcut.
 
 ## How the package is structured
 
-- Canonical source lives in `.kiro/skills`.
+- Canonical source prefers `.skills`, then falls back to `.kiro/skills`.
+- `bin/cli.js` can install skills or list the bundled catalog in text or JSON form.
 - `bin/cli.js` renders each skill into the correct target format for the chosen IDE.
-- `lib/skill-bundle.js` contains the shared render and install logic.
+- `lib/skill-bundle.js` contains discovery, YAML parsing, catalog, render, and install logic.
 - `scripts/render-targets.js` renders sample outputs under `generated/`.
+
+## Catalog metadata
+
+Each discovered skill exposes:
+
+- `slug` and frontmatter `name`
+- `description`
+- `sourceRoot`
+- `hasScripts`, `hasReferences`, `hasAssets`
+- per-target compatibility metadata for native and generated installs
+
+This keeps the published package lightweight while still surfacing enough information for discovery and validation.
 
 ## Development
 
@@ -93,7 +111,9 @@ npm test
 npm run build:targets
 ```
 
-`npm test` runs installation verification against temporary Kiro, Cursor, Antigravity, and VS Code targets.
+`npm test` runs installation verification against temporary bundle roots and Kiro, Cursor, Antigravity, and VS Code targets.
+
+See [docs/skills-benchmark.md](docs/skills-benchmark.md) for the short benchmark summary behind this design.
 
 ## License
 

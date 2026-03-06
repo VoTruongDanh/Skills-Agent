@@ -9,6 +9,7 @@ const {
   getAvailableIDENames,
   getIDEDefinition,
   getInstalledVersion,
+  getSkillCatalog,
   installBundle,
   listSkillNames,
   normalizeIDEName,
@@ -25,6 +26,10 @@ function parseIDEFlag() {
   }
 
   return null;
+}
+
+function hasFlag(flag) {
+  return process.argv.slice(2).includes(flag);
 }
 
 function checkForUpdates(callback) {
@@ -111,6 +116,36 @@ function printResolution(context) {
   console.log('Tip: use --ide=cursor, --ide=antigravity, --ide=vscode, or --ide=kiro\n');
 }
 
+function dedupeWarnings(warnings) {
+  const seen = new Set();
+  const uniqueWarnings = [];
+
+  for (const warning of warnings || []) {
+    const key = `${warning.code || 'warning'}:${warning.message}`;
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    uniqueWarnings.push(warning);
+  }
+
+  return uniqueWarnings;
+}
+
+function printWarnings(warnings) {
+  const uniqueWarnings = dedupeWarnings(warnings);
+  if (!uniqueWarnings.length) {
+    return;
+  }
+
+  console.log('Warnings:');
+  for (const warning of uniqueWarnings) {
+    console.log(`  - ${warning.message}`);
+  }
+  console.log('');
+}
+
 function printInstallResult(result, previousVersion, scope) {
   const action = previousVersion ? 'Updated' : 'Installed';
   const targetLabel = scope === 'global' ? 'Global targets' : 'Targets';
@@ -126,6 +161,7 @@ function printInstallResult(result, previousVersion, scope) {
     console.log(`  - ${relativePath}${tag}`);
   }
   console.log('');
+  printWarnings(result.warnings);
   console.log('Next steps:');
   console.log(`  1. Reopen ${result.displayName}.`);
   console.log('  2. Open agent chat and type "/" to list skills or slash commands.');
@@ -164,6 +200,85 @@ function install(scope) {
   }
 }
 
+function getTargetCompatibility(skill, ide) {
+  const ideDefinition = getIDEDefinition(ide) || getIDEDefinition('generic');
+
+  return ideDefinition.targets.map((target) => ({
+    format: target.format,
+    status: skill.compatibility[target.format].status,
+    warnings: skill.compatibility[target.format].warnings,
+  }));
+}
+
+function formatCompatibilitySummary(skill, ide) {
+  return getTargetCompatibility(skill, ide)
+    .map((target) => {
+      const status = target.status === 'generated-with-warnings' ? 'generated+warnings' : target.status;
+      return `${target.format}: ${status}`;
+    })
+    .join(', ');
+}
+
+function printListContext(context) {
+  const ideDefinition = getIDEDefinition(context.ide);
+  console.log(`Listing bundled skills for ${ideDefinition.displayName}.`);
+  if (context.matchedPath) {
+    console.log(`Detected from: ${context.matchedPath}`);
+  }
+  console.log('');
+}
+
+function listSkills() {
+  try {
+    const context = resolveInstallContext();
+    const catalogResult = getSkillCatalog({ includeDiagnostics: true });
+    const jsonMode = hasFlag('--json');
+    const renderedCatalog = catalogResult.skills.map((skill) => ({
+      slug: skill.slug,
+      name: skill.name,
+      description: skill.description,
+      sourceRoot: skill.sourceRoot,
+      hasScripts: skill.hasScripts,
+      hasReferences: skill.hasReferences,
+      hasAssets: skill.hasAssets,
+      compatibility: getTargetCompatibility(skill, context.ide),
+    }));
+
+    if (jsonMode) {
+      console.log(
+        JSON.stringify(
+          {
+            package: PACKAGE_NAME,
+            version: CURRENT_VERSION,
+            ide: context.ide,
+            skills: renderedCatalog,
+            diagnostics: dedupeWarnings(catalogResult.diagnostics),
+          },
+          null,
+          2
+        )
+      );
+      return;
+    }
+
+    printListContext(context);
+    console.log('Available skills:');
+    for (const skill of catalogResult.skills) {
+      console.log(
+        `  - /${skill.slug} - ${skill.description} [source: ${skill.sourceRoot}] [${formatCompatibilitySummary(
+          skill,
+          context.ide
+        )}]`
+      );
+    }
+    console.log('');
+    printWarnings(catalogResult.diagnostics);
+  } catch (error) {
+    console.error(`Error listing skills: ${error.message}`);
+    process.exit(1);
+  }
+}
+
 function showHelp() {
   const skillNames = listSkillNames().map((name) => `/${name}`).join(', ');
 
@@ -174,6 +289,8 @@ Usage:
   npx ${PACKAGE_NAME} init
   npx ${PACKAGE_NAME} init --ide=<name>
   npx ${PACKAGE_NAME} global
+  npx ${PACKAGE_NAME} list
+  npx ${PACKAGE_NAME} list --json
   npx ${PACKAGE_NAME} help
 
 Supported IDE values:
@@ -184,6 +301,14 @@ Supported IDE values:
   copilot      -> .github/skills for GitHub Copilot agent mode
   generic      -> .kiro/skills fallback
 
+Canonical skill roots:
+  .skills      -> preferred portable source
+  .kiro/skills -> legacy fallback source
+
+Generated target limitations:
+  Cursor .mdc rules and Antigravity workflows only render SKILL.md content.
+  Companion scripts/, references/, and assets/ stay native-only.
+
 Primary install path:
   npx ${PACKAGE_NAME} init
 
@@ -192,6 +317,10 @@ Force a specific IDE:
   npx ${PACKAGE_NAME} init --ide=antigravity
   npx ${PACKAGE_NAME} init --ide=vscode
   npx ${PACKAGE_NAME} init --ide=kiro
+
+Inspect the bundled catalog:
+  npx ${PACKAGE_NAME} list
+  npx ${PACKAGE_NAME} list --json
 
 PowerShell wrapper (optional):
   powershell -ExecutionPolicy Bypass -File .\\bin\\install-skills.ps1 -Ide vscode
@@ -212,13 +341,16 @@ switch (command) {
   case 'global':
     checkForUpdates(() => install('global'));
     break;
+  case 'list':
+    listSkills();
+    break;
   case 'help':
   case '--help':
   case '-h':
     showHelp();
     break;
   default:
-    console.log('Unknown command. Use "init", "global", or "help".\n');
+    console.log('Unknown command. Use "init", "global", "list", or "help".\n');
     showHelp();
     process.exit(1);
 }

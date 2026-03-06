@@ -43,6 +43,7 @@
   },
   "homepage": "https://github.com/votruongdanh/ai-agent-skills#readme",
   "files": [
+    ".skills",
     ".kiro",
     "bin",
     "lib",
@@ -53,5 +54,8 @@
   ],
   "engines": {
     "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "yaml": "^2.8.2"
   }
 }

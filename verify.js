@@ -7,94 +7,240 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 const {
+  CANONICAL_SKILL_ROOTS,
   findIDEContext,
   getIDEDefinition,
+  getSkillCatalog,
   installBundle,
   listSkillNames,
   parseFrontmatter,
+  readSkill,
 } = require('./lib/skill-bundle');
 
 console.log('Verifying package structure...\n');
 
+function writeSkill(rootDir, sourceRoot, skillName, frontmatter, body) {
+  const sourceDir =
+    sourceRoot === '.skills'
+      ? path.join(rootDir, '.skills', skillName)
+      : path.join(rootDir, '.kiro', 'skills', skillName);
+
+  fs.mkdirSync(sourceDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(sourceDir, 'SKILL.md'),
+    ['---', frontmatter.trim(), '---', '', body.trim(), ''].join('\n'),
+    'utf8'
+  );
+
+  return sourceDir;
+}
+
+function runCli(args) {
+  return execFileSync(process.execPath, [path.join(__dirname, 'bin', 'cli.js'), ...args], {
+    cwd: __dirname,
+    encoding: 'utf8',
+  });
+}
+
 const checks = [
   {
     name: 'package.json exists',
-    test: () => fs.existsSync('package.json')
+    test: () => fs.existsSync('package.json'),
   },
   {
     name: 'README.md exists',
-    test: () => fs.existsSync('README.md')
+    test: () => fs.existsSync('README.md'),
   },
   {
     name: 'LICENSE exists',
-    test: () => fs.existsSync('LICENSE')
+    test: () => fs.existsSync('LICENSE'),
   },
   {
     name: 'bin/cli.js exists',
-    test: () => fs.existsSync('bin/cli.js')
+    test: () => fs.existsSync('bin/cli.js'),
   },
   {
     name: 'bin/cli.js has shebang',
-    test: () => fs.readFileSync('bin/cli.js', 'utf8').startsWith('#!/usr/bin/env node')
+    test: () => fs.readFileSync('bin/cli.js', 'utf8').startsWith('#!/usr/bin/env node'),
   },
   {
     name: 'bin/install-skills.ps1 exists',
-    test: () => fs.existsSync('bin/install-skills.ps1')
+    test: () => fs.existsSync('bin/install-skills.ps1'),
   },
   {
     name: 'lib/skill-bundle.js exists',
-    test: () => fs.existsSync('lib/skill-bundle.js')
+    test: () => fs.existsSync('lib/skill-bundle.js'),
   },
   {
-    name: '.kiro/skills directory exists',
-    test: () => fs.existsSync('.kiro/skills')
+    name: 'At least one canonical skill root exists',
+    test: () => CANONICAL_SKILL_ROOTS.some((root) => fs.existsSync(root)),
   },
   {
-    name: 'All 12 skills present',
+    name: 'All 12 bundled skills are discoverable',
     test: () => {
       const expectedSkills = [
-        'brainstorm', 'clean', 'create', 'debug', 'deploy', 'enhance',
-        'orchestrate', 'plan', 'preview', 'status', 'test', 'ui-ux-pro-max'
+        'brainstorm',
+        'clean',
+        'create',
+        'debug',
+        'deploy',
+        'enhance',
+        'orchestrate',
+        'plan',
+        'preview',
+        'status',
+        'test',
+        'ui-ux-pro-max',
       ];
 
-      return expectedSkills.every((skill) =>
-        fs.existsSync(path.join('.kiro', 'skills', skill, 'SKILL.md'))
-      ) && listSkillNames().length === expectedSkills.length;
-    }
+      return (
+        expectedSkills.every((skill) => listSkillNames().includes(skill)) &&
+        listSkillNames().length === expectedSkills.length
+      );
+    },
   },
   {
-    name: 'Every SKILL.md has name and description frontmatter',
+    name: 'Every bundled skill has name and description frontmatter',
     test: () => {
-      return listSkillNames().every((skill) => {
-        const content = fs.readFileSync(path.join('.kiro', 'skills', skill, 'SKILL.md'), 'utf8');
-        const parsed = parseFrontmatter(content);
-        return Boolean(parsed.frontmatter.name && parsed.frontmatter.description);
-      });
-    }
+      return getSkillCatalog().every((skill) => Boolean(skill.name && skill.description));
+    },
   },
   {
     name: 'package.json has correct bin field',
     test: () => {
       const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
       return pkg.bin && pkg.bin['ai-skills'] === 'bin/cli.js';
-    }
+    },
   },
   {
-    name: 'package.json has correct files field',
+    name: 'package.json files include portable and legacy roots',
     test: () => {
       const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-      return pkg.files && pkg.files.includes('.kiro') && pkg.files.includes('lib') && pkg.files.includes('bin');
-    }
+      return (
+        pkg.files &&
+        pkg.files.includes('.skills') &&
+        pkg.files.includes('.kiro') &&
+        pkg.files.includes('lib') &&
+        pkg.files.includes('bin')
+      );
+    },
   },
   {
     name: '.gitignore exists',
-    test: () => fs.existsSync('.gitignore')
+    test: () => fs.existsSync('.gitignore'),
   },
   {
     name: '.npmignore exists',
-    test: () => fs.existsSync('.npmignore')
+    test: () => fs.existsSync('.npmignore'),
+  },
+  {
+    name: 'Dual-source discovery prefers .skills over .kiro/skills',
+    test: () => {
+      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-dual-source-'));
+
+      try {
+        writeSkill(
+          tempRoot,
+          '.kiro/skills',
+          'demo',
+          `
+name: demo
+description: Legacy copy
+metadata:
+  source: legacy
+          `,
+          'Legacy body'
+        );
+        writeSkill(
+          tempRoot,
+          '.skills',
+          'demo',
+          `
+name: demo
+description: Portable copy
+metadata:
+  source: portable
+          `,
+          'Portable body'
+        );
+
+        const result = getSkillCatalog({ bundleRoot: tempRoot, includeDiagnostics: true });
+        return (
+          result.skills.length === 1 &&
+          result.skills[0].sourceRoot === '.skills' &&
+          result.skills[0].metadata.source === 'portable' &&
+          result.diagnostics.some((warning) => warning.code === 'duplicate-skill')
+        );
+      } finally {
+        fs.rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
+  },
+  {
+    name: 'parseFrontmatter supports nested YAML metadata and quoted colons',
+    test: () => {
+      const parsed = parseFrontmatter(`---
+name: parser-check
+description: "Parse: nested metadata"
+metadata:
+  category: validation
+  tags:
+    - yaml
+    - nested
+allowed-tools:
+  - read
+  - write
+---
+
+Body`);
+
+      return (
+        parsed.frontmatter.description === 'Parse: nested metadata' &&
+        parsed.frontmatter.metadata.category === 'validation' &&
+        Array.isArray(parsed.frontmatter.metadata.tags) &&
+        parsed.frontmatter['allowed-tools'][1] === 'write'
+      );
+    },
+  },
+  {
+    name: 'readSkill preserves optional frontmatter fields and source metadata',
+    test: () => {
+      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-read-skill-'));
+
+      try {
+        writeSkill(
+          tempRoot,
+          '.skills',
+          'catalog-demo',
+          `
+name: catalog-demo
+description: Catalog demo
+metadata:
+  category: benchmark
+allowed-tools:
+  - read
+compatibility:
+  copilot: native
+license: MIT
+          `,
+          'Catalog body'
+        );
+
+        const skill = readSkill('catalog-demo', { bundleRoot: tempRoot });
+        return (
+          skill.sourceRoot === '.skills' &&
+          skill.metadata.category === 'benchmark' &&
+          skill.allowedTools[0] === 'read' &&
+          skill.frontmatter.compatibility.copilot === 'native' &&
+          skill.frontmatter.license === 'MIT'
+        );
+      } finally {
+        fs.rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
   },
   {
     name: 'installBundle creates Kiro, Cursor, Antigravity, and VS Code targets',
@@ -112,7 +258,7 @@ const checks = [
             ide,
             scope: 'project',
             version: 'verify',
-            includeCompatibilityAliases: true
+            includeCompatibilityAliases: true,
           });
 
           const definition = getIDEDefinition(ide);
@@ -130,7 +276,53 @@ const checks = [
       } finally {
         fs.rmSync(tempRoot, { recursive: true, force: true });
       }
-    }
+    },
+  },
+  {
+    name: 'Generated targets warn when portable assets cannot be preserved',
+    test: () => {
+      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-assets-'));
+      const installRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-assets-install-'));
+
+      try {
+        const skillDir = writeSkill(
+          tempRoot,
+          '.skills',
+          'asset-demo',
+          `
+name: asset-demo
+description: Asset demo
+          `,
+          'Asset body'
+        );
+        fs.mkdirSync(path.join(skillDir, 'scripts'), { recursive: true });
+        fs.writeFileSync(path.join(skillDir, 'scripts', 'helper.sh'), 'echo helper\n', 'utf8');
+        fs.mkdirSync(path.join(skillDir, 'references'), { recursive: true });
+        fs.writeFileSync(path.join(skillDir, 'references', 'README.md'), '# Ref\n', 'utf8');
+
+        const result = installBundle({
+          baseDir: installRoot,
+          bundleRoot: tempRoot,
+          ide: 'cursor',
+          scope: 'project',
+          version: 'verify',
+          includeCompatibilityAliases: false,
+        });
+
+        return (
+          fs.existsSync(path.join(installRoot, '.cursor', 'skills', 'asset-demo', 'scripts', 'helper.sh')) &&
+          result.warnings.some(
+            (warning) =>
+              warning.code === 'generated-target-assets' &&
+              warning.skill === 'asset-demo' &&
+              warning.format === 'cursor-rule'
+          )
+        );
+      } finally {
+        fs.rmSync(tempRoot, { recursive: true, force: true });
+        fs.rmSync(installRoot, { recursive: true, force: true });
+      }
+    },
   },
   {
     name: 'findIDEContext detects IDE markers from parent workspace folders',
@@ -153,8 +345,33 @@ const checks = [
       } finally {
         fs.rmSync(tempRoot, { recursive: true, force: true });
       }
-    }
-  }
+    },
+  },
+  {
+    name: 'CLI list renders text output with source roots and compatibility',
+    test: () => {
+      const output = runCli(['list', '--ide=cursor']);
+      return (
+        output.includes('Available skills:') &&
+        output.includes('/plan') &&
+        output.includes('source: .kiro/skills') &&
+        output.includes('skill: native')
+      );
+    },
+  },
+  {
+    name: 'CLI list --json returns parseable catalog output',
+    test: () => {
+      const output = runCli(['list', '--json']);
+      const parsed = JSON.parse(output);
+      return (
+        parsed.package === '@votruongdanh/ai-agent-skills' &&
+        Array.isArray(parsed.skills) &&
+        parsed.skills.some((skill) => skill.slug === 'plan') &&
+        Array.isArray(parsed.diagnostics)
+      );
+    },
+  },
 ];
 
 let passed = 0;

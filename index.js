@@ -3,22 +3,21 @@
  * Cross-IDE agent skills for Kiro, Cursor, Antigravity, and VS Code/Copilot.
  */
 
+const { getSkillCatalog, listSkillNames } = require('./lib/skill-bundle');
+
 module.exports = {
   name: '@votruongdanh/ai-agent-skills',
   version: require('./package.json').version,
   author: 'Vo Truong Danh (votruongdanh)',
-  skills: [
-    'brainstorm',
-    'clean',
-    'create',
-    'debug',
-    'deploy',
-    'enhance',
-    'orchestrate',
-    'plan',
-    'preview',
-    'status',
-    'test',
-    'ui-ux-pro-max'
-  ]
+  skills: listSkillNames(),
+  catalog: getSkillCatalog().map((skill) => ({
+    slug: skill.slug,
+    name: skill.name,
+    description: skill.description,
+    sourceRoot: skill.sourceRoot,
+    hasScripts: skill.hasScripts,
+    hasReferences: skill.hasReferences,
+    hasAssets: skill.hasAssets,
+    compatibility: skill.compatibility,
+  })),
 };
