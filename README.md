@@ -1,155 +1,95 @@
-# 🚀 AI Agent Skills
+# AI Agent Skills
 
-Professional AI agent skills for Kiro, Cursor, Antigravity, and other AI-powered IDEs. 12 battle-tested workflows to supercharge your development.
+Cross-IDE AI agent skills with one canonical `SKILL.md` source and installers that render the right layout for each IDE.
 
 [![npm version](https://img.shields.io/npm/v/@votruongdanh/ai-agent-skills.svg)](https://www.npmjs.com/package/@votruongdanh/ai-agent-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## ⚡ Quick Install
-
-One command, works everywhere:
+## Quick install
 
 ```bash
 npx @votruongdanh/ai-agent-skills init
 ```
 
-That's it! No need to clone repos or download files.
+This is the primary online install path for any machine with Node.js.
 
-## 🎯 Supported IDEs
-
-The CLI automatically detects your IDE and installs to the correct location:
-
-✅ **Antigravity** - `agent/skills/`  
-✅ **Kiro** - `.kiro/skills/`  
-✅ **Cursor** - `.cursor/skills/`  
-✅ **Windsurf** - `.windsurf/skills/`  
-✅ **Continue** - `.continue/skills/`  
-✅ **Cody** - `.cody/skills/`  
-✅ **GitHub Copilot** - `.github/copilot/skills/`  
-✅ **Aider** - `.aider/skills/`  
-✅ **Tabnine** - `.tabnine/skills/`  
-✅ **Others** - Uses Kiro format (most compatible)
-
-No configuration needed - just run the install command!
-
-## 📦 12 Professional Skills
-
-| Skill | Command | Use Case |
-|-------|---------|----------|
-| **Brainstorm** | `/brainstorm` | Generate ideas and explore features |
-| **Clean** | `/clean` | Remove junk files and AI artifacts |
-| **Create** | `/create` | Build new features from scratch |
-| **Debug** | `/debug` | Find and fix bugs systematically |
-| **Deploy** | `/deploy` | Deployment and CI/CD guidance |
-| **Enhance** | `/enhance` | Improve existing code quality |
-| **Orchestrate** | `/orchestrate` | Coordinate multi-step workflows |
-| **Plan** | `/plan` | Break down implementation tasks |
-| **Preview** | `/preview` | Preview UX and output |
-| **Status** | `/status` | Get project status overview |
-| **Test** | `/test` | Write tests and improve coverage |
-| **UI/UX Pro Max** | `/ui-ux-pro-max` | Advanced UI/UX improvements |
-
-## 💡 Usage Examples
+If auto-detection is ambiguous, force the target IDE:
 
 ```bash
-# Auto-detect IDE (recommended)
-npx @votruongdanh/ai-agent-skills init
-
-# Force specific IDE
-npx @votruongdanh/ai-agent-skills init --ide=antigravity
 npx @votruongdanh/ai-agent-skills init --ide=cursor
+npx @votruongdanh/ai-agent-skills init --ide=antigravity
+npx @votruongdanh/ai-agent-skills init --ide=vscode
+```
+
+PowerShell wrapper is optional only. The package does not require PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\bin\install-skills.ps1 -Ide vscode
+```
+
+## What is actually supported
+
+The installer now writes IDE-specific layouts instead of copying `.kiro` everywhere.
+
+| IDE | Installed layout | Notes |
+| --- | --- | --- |
+| Kiro | `.kiro/skills/<skill>/SKILL.md` | Native skill format |
+| Cursor | `.cursor/skills/<skill>/SKILL.md` | Native skill format |
+| Cursor legacy | `.cursor/rules/<skill>.mdc` | Generated compatibility layer |
+| Antigravity | `.agent/workflows/<skill>.md` | Generated workflow bridge |
+| Antigravity legacy | `agent/workflows/<skill>.md` | Compatibility alias for older setups |
+| VS Code / GitHub Copilot | `.github/skills/<skill>/SKILL.md` | Native agent skills |
+| Global Copilot | `~/.copilot/skills/<skill>/SKILL.md` | Used by `global` install |
+
+## Available skills
+
+- `/brainstorm`
+- `/clean`
+- `/create`
+- `/debug`
+- `/deploy`
+- `/enhance`
+- `/orchestrate`
+- `/plan`
+- `/preview`
+- `/status`
+- `/test`
+- `/ui-ux-pro-max`
+
+## Commands
+
+```bash
+npx @votruongdanh/ai-agent-skills init
+npx @votruongdanh/ai-agent-skills init --ide=generic
 npx @votruongdanh/ai-agent-skills init --ide=kiro
-```
-
-**In your IDE:**
-```
-/create Add user authentication with JWT
-/debug Login form not submitting on mobile
-/enhance Optimize database query performance
-/plan Implement real-time notifications
-```
-
-## 🌍 Installation Options
-
-### Project-specific (Recommended)
-```bash
-# Auto-detect your IDE
-cd your-project
-npx @votruongdanh/ai-agent-skills init
-
-# Or specify IDE manually
-npx @votruongdanh/ai-agent-skills init --ide=antigravity
 npx @votruongdanh/ai-agent-skills init --ide=cursor
-npx @votruongdanh/ai-agent-skills init --ide=windsurf
-```
-
-### Global (All projects)
-```bash
+npx @votruongdanh/ai-agent-skills init --ide=antigravity
+npx @votruongdanh/ai-agent-skills init --ide=vscode
 npx @votruongdanh/ai-agent-skills global
 ```
 
-**Tip:** If auto-detection doesn't work, use `--ide=<name>` to specify your IDE manually.
+Recommended:
 
-## 🔧 How It Works
+- Use `npx @votruongdanh/ai-agent-skills init` for normal online install.
+- Use `--ide=<name>` only when auto-detect picks the wrong target.
+- Ignore the PowerShell wrapper unless you specifically want a Windows shortcut.
 
-1. Run `npx @votruongdanh/ai-agent-skills init`
-2. CLI automatically detects your IDE (Antigravity, Kiro, Cursor, etc.)
-3. Skills installed to the correct config folder
-4. Restart your IDE
-5. Type `/` in chat to see available skills
+## How the package is structured
 
-Works with 9+ AI-powered IDEs out of the box!
+- Canonical source lives in `.kiro/skills`.
+- `bin/cli.js` renders each skill into the correct target format for the chosen IDE.
+- `lib/skill-bundle.js` contains the shared render and install logic.
+- `scripts/render-targets.js` renders sample outputs under `generated/`.
 
-## ⚙️ Customization
-
-Each skill is a markdown file you can edit:
-
-```bash
-# For Kiro
-code .kiro/skills/create/SKILL.md
-
-# For Cursor
-code .cursor/skills/create/SKILL.md
-
-# For Windsurf
-code .windsurf/skills/create/SKILL.md
-```
-
-**Note:** Updates will overwrite skill files. To preserve customizations:
-1. Backup your modified skills before updating
-2. Or create custom skills with different names
-
-## 🔄 Updates
-
-The CLI automatically checks for updates and notifies you. To update:
+## Development
 
 ```bash
-npx @votruongdanh/ai-agent-skills@latest init
+npm test
+npm run build:targets
 ```
 
-**Smart Update Features:**
-- ✅ Auto-detects installed version
-- ✅ Shows version comparison
-- ✅ Preserves your customizations (optional)
-- ✅ Works across all supported IDEs
+`npm test` runs installation verification against temporary Kiro, Cursor, Antigravity, and VS Code targets.
 
-## 📄 License
+## License
 
-MIT - Use freely in any project
-
-## 👤 Author
-
-**Vo Truong Danh**  
-GitHub: [@votruongdanh](https://github.com/votruongdanh)
-
-## 🤝 Contributing
-
-Issues and PRs welcome at [GitHub](https://github.com/votruongdanh/ai-agent-skills)
-
-## 🌟 Inspired By
-
-This project is inspired by [Antigravity Kit](https://github.com/vudovn/antigravity-kit) - A collection of powerful AI development tools.
-
----
-
-Made with ❤️ for the AI developer community
+MIT

@@ -18,6 +18,7 @@ Thumbs.db
 # Build
 dist/
 build/
+generated/
 
 # Misc
 .env

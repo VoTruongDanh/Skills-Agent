@@ -1,13 +1,14 @@
 {
   "name": "@votruongdanh/ai-agent-skills",
   "version": "1.5.1",
-  "description": "Professional AI Agent Skills - 12 powerful workflows for Antigravity, Kiro, Cursor, Windsurf, Continue, Cody, and other AI IDEs",
+  "description": "Cross-IDE AI agent skills with native installers for Kiro, Cursor, Antigravity, and VS Code/Copilot",
   "main": "index.js",
   "bin": {
     "ai-skills": "bin/cli.js"
   },
   "scripts": {
-    "test": "echo \"No tests specified\" && exit 0",
+    "build:targets": "node scripts/render-targets.js",
+    "test": "node verify.js",
     "release:patch": "npm version patch && git push --follow-tags && npm publish --access public",
     "release:minor": "npm version minor && git push --follow-tags && npm publish --access public",
     "release:major": "npm version major && git push --follow-tags && npm publish --access public"
@@ -15,13 +16,9 @@
   "keywords": [
     "kiro",
     "cursor",
-    "windsurf",
     "antigravity",
-    "continue",
-    "cody",
     "copilot",
-    "aider",
-    "tabnine",
+    "vscode",
     "ai",
     "agent",
     "skills",
@@ -47,10 +44,11 @@
   "homepage": "https://github.com/votruongdanh/ai-agent-skills#readme",
   "files": [
     ".kiro",
-    ".cursor",
-    ".agent",
     "bin",
+    "lib",
+    "scripts",
     "index.js",
+    "LICENSE",
     "README.md"
   ],
   "engines": {

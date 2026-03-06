@@ -1,14 +1,6 @@
 /**
- * Kiro Antigravity Skills
- * Professional AI agent skills for Kiro IDE and compatible platforms
- */
-
-/**
  * AI Agent Skills by Vo Truong Danh
- * Professional AI agent skills for Kiro, Cursor, Windsurf, and other AI IDEs
- * 
- * @author Vo Truong Danh <votruongdanh@example.com>
- * @license MIT
+ * Cross-IDE agent skills for Kiro, Cursor, Antigravity, and VS Code/Copilot.
  */
 
 module.exports = {
@@ -17,6 +9,7 @@ module.exports = {
   author: 'Vo Truong Danh (votruongdanh)',
   skills: [
     'brainstorm',
+    'clean',
     'create',
     'debug',
     'deploy',

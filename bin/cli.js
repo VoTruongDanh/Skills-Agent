@@ -1,307 +1,163 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
 const path = require('path');
-const os = require('os');
 const https = require('https');
 
-const command = process.argv[2];
-const ideFlag = process.argv[3]; // Support --ide=<name> flag
+const {
+  detectIDE,
+  getAvailableIDENames,
+  getIDEDefinition,
+  getInstalledVersion,
+  installBundle,
+  listSkillNames,
+  normalizeIDEName,
+} = require('../lib/skill-bundle');
+
 const PACKAGE_NAME = '@votruongdanh/ai-agent-skills';
 const CURRENT_VERSION = require('../package.json').version;
 
-// Check for updates
-function checkForUpdates(callback) {
-  https.get(`https://registry.npmjs.org/${PACKAGE_NAME}/latest`, (res) => {
-    let data = '';
-    res.on('data', (chunk) => data += chunk);
-    res.on('end', () => {
-      try {
-        const latest = JSON.parse(data).version;
-        if (latest !== CURRENT_VERSION) {
-          console.log(`\n📢 Update available: ${CURRENT_VERSION} → ${latest}`);
-          console.log(`   Run: npx ${PACKAGE_NAME}@latest init\n`);
-        }
-        callback();
-      } catch (e) {
-        callback(); // Silent fail
-      }
-    });
-  }).on('error', () => callback()); // Silent fail
-}
-
-// Parse IDE from command line flag
 function parseIDEFlag() {
-  const args = process.argv.slice(2);
-  for (const arg of args) {
+  for (const arg of process.argv.slice(2)) {
     if (arg.startsWith('--ide=')) {
-      return arg.split('=')[1].toLowerCase();
+      return arg.split('=')[1];
     }
   }
+
   return null;
 }
 
-// Detect IDE type with expanded support
-function detectIDE() {
-  // Check if user specified IDE via flag
+function checkForUpdates(callback) {
+  https
+    .get(`https://registry.npmjs.org/${PACKAGE_NAME}/latest`, (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        try {
+          const latest = JSON.parse(data).version;
+          if (latest !== CURRENT_VERSION) {
+            console.log(`\nUpdate available: ${CURRENT_VERSION} -> ${latest}`);
+            console.log(`Run: npx ${PACKAGE_NAME}@latest init\n`);
+          }
+        } catch (error) {
+          // Ignore update check failures.
+        }
+
+        callback();
+      });
+    })
+    .on('error', () => callback());
+}
+
+function resolveIDE() {
   const manualIDE = parseIDEFlag();
+
   if (manualIDE) {
-    const validIDEs = ['antigravity', 'kiro', 'cursor', 'windsurf', 'continue', 'cody', 'copilot', 'aider', 'tabnine'];
-    if (validIDEs.includes(manualIDE)) {
-      console.log(`📌 Using manually specified IDE: ${getIDEDisplayName(manualIDE)}\n`);
-      return manualIDE;
-    } else {
-      console.log(`⚠️  Unknown IDE: ${manualIDE}. Auto-detecting...\n`);
+    const normalized = normalizeIDEName(manualIDE);
+    if (normalized) {
+      return normalized;
     }
+
+    console.log(`Unknown IDE flag: ${manualIDE}`);
+    console.log(`Supported values: ${getAvailableIDENames().join(', ')}\n`);
   }
-  
-  const cwd = process.cwd();
-  const homeDir = os.homedir();
-  
-  // IDE detection map - order matters (most specific first)
-  const ideChecks = [
-    { name: 'antigravity', paths: ['agent/skills', 'agent'] }, // Antigravity uses agent/ not .antigravity/
-    { name: 'kiro', paths: ['.kiro'] },
-    { name: 'cursor', paths: ['.cursor'] },
-    { name: 'windsurf', paths: ['.windsurf'] },
-    { name: 'continue', paths: ['.continue'] },
-    { name: 'cody', paths: ['.cody'] },
-    { name: 'copilot', paths: ['.github/copilot'] },
-    { name: 'aider', paths: ['.aider'] },
-    { name: 'tabnine', paths: ['.tabnine'] },
-  ];
-  
-  // Check current directory first
-  for (const ide of ideChecks) {
-    for (const idePath of ide.paths) {
-      if (fs.existsSync(path.join(cwd, idePath))) {
-        console.log(`🔍 Auto-detected: ${getIDEDisplayName(ide.name)} (found ${idePath}/)\n`);
-        return ide.name;
-      }
-    }
-  }
-  
-  // Check home directory for global configs
-  for (const ide of ideChecks) {
-    for (const idePath of ide.paths) {
-      if (fs.existsSync(path.join(homeDir, idePath))) {
-        console.log(`🔍 Auto-detected: ${getIDEDisplayName(ide.name)} (found ~/${idePath}/)\n`);
-        return ide.name;
-      }
-    }
-  }
-  
-  // Default to kiro (most common and compatible)
-  console.log(`ℹ️  No IDE detected. Using Kiro format (most compatible)\n`);
-  return 'kiro';
+
+  return detectIDE(process.cwd());
 }
 
-// Get IDE display name
-function getIDEDisplayName(ide) {
-  const names = {
-    'antigravity': 'Antigravity',
-    'kiro': 'Kiro',
-    'cursor': 'Cursor',
-    'windsurf': 'Windsurf',
-    'continue': 'Continue',
-    'cody': 'Cody',
-    'copilot': 'GitHub Copilot',
-    'aider': 'Aider',
-    'tabnine': 'Tabnine'
-  };
-  return names[ide] || ide.charAt(0).toUpperCase() + ide.slice(1);
-}
+function printInstallResult(result, previousVersion, scope) {
+  const action = previousVersion ? 'Updated' : 'Installed';
+  const targetLabel = scope === 'global' ? 'Global targets' : 'Targets';
 
-// Get IDE config directory
-function getIDEConfigDir(ide) {
-  const configDirs = {
-    'antigravity': 'agent', // Antigravity uses agent/ folder
-    'kiro': '.kiro',
-    'cursor': '.cursor',
-    'windsurf': '.windsurf',
-    'continue': '.continue',
-    'cody': '.cody',
-    'copilot': '.github/copilot',
-    'aider': '.aider',
-    'tabnine': '.tabnine'
-  };
-  return configDirs[ide] || `.${ide}`;
-}
-
-function copyDirectory(src, dest, options = {}) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
+  console.log(`${action} ${result.skillCount} skills for ${result.displayName}.`);
+  if (previousVersion) {
+    console.log(`Version: ${previousVersion} -> ${CURRENT_VERSION}`);
   }
-
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-
-    if (entry.isDirectory()) {
-      copyDirectory(srcPath, destPath, options);
-    } else {
-      // Skip if file exists and preserve flag is set
-      if (options.preserveExisting && fs.existsSync(destPath)) {
-        console.log(`   ⏭️  Skipped (exists): ${entry.name}`);
-        continue;
-      }
-      fs.copyFileSync(srcPath, destPath);
-      if (options.verbose) {
-        console.log(`   ✓ ${entry.name}`);
-      }
-    }
+  console.log(`${targetLabel}:`);
+  for (const target of result.targets) {
+    const relativePath = path.relative(process.cwd(), target.targetDir) || '.';
+    const tag = target.compatibility ? ' (compat)' : '';
+    console.log(`  - ${relativePath}${tag}`);
   }
+  console.log('');
+  console.log('Next steps:');
+  console.log(`  1. Reopen ${result.displayName}.`);
+  console.log('  2. Open agent chat and type "/" to list skills or slash commands.');
+  console.log('  3. Run a skill such as /create, /debug, or /plan.\n');
 }
 
-function saveVersionInfo(targetPath, version) {
-  const versionFile = path.join(targetPath, '.skills-version');
-  fs.writeFileSync(versionFile, version);
-}
-
-function getInstalledVersion(targetPath) {
-  const versionFile = path.join(targetPath, '.skills-version');
-  if (fs.existsSync(versionFile)) {
-    return fs.readFileSync(versionFile, 'utf8').trim();
-  }
-  return null;
-}
-
-function init() {
-  const cwd = process.cwd();
-  const ide = detectIDE();
-  const ideDisplay = getIDEDisplayName(ide);
-  const ideConfigDir = getIDEConfigDir(ide);
-  const skillsSource = path.join(__dirname, '..', '.kiro');
-  const skillsTarget = path.join(cwd, ideConfigDir);
-  const installedVersion = getInstalledVersion(skillsTarget);
-  const isUpdate = installedVersion !== null;
-
-  if (isUpdate) {
-    console.log(`🔄 Updating AI Agent Skills for ${ideDisplay}...`);
-    console.log(`   ${installedVersion} → ${CURRENT_VERSION}\n`);
-  } else {
-    console.log(`🚀 Installing AI Agent Skills for ${ideDisplay}...\n`);
-  }
-
+function install(scope) {
   try {
-    if (fs.existsSync(skillsTarget) && !isUpdate) {
-      console.log(`⚠️  ${ideConfigDir} folder already exists.`);
-      console.log('   Merging skills into existing folder...\n');
-    }
+    const ide = resolveIDE();
+    const ideDefinition = getIDEDefinition(ide);
+    const baseDir = process.cwd();
+    const rootDir =
+      scope === 'global'
+        ? ideDefinition.globalRoot
+        : path.join(baseDir, ideDefinition.projectRoot);
+    const installedVersion = getInstalledVersion(rootDir);
 
-    // Preserve user customizations on update
-    const options = isUpdate ? { preserveExisting: false, verbose: false } : {};
-    copyDirectory(skillsSource, skillsTarget, options);
-    saveVersionInfo(skillsTarget, CURRENT_VERSION);
+    console.log(
+      `${installedVersion ? 'Updating' : 'Installing'} AI Agent Skills for ${ideDefinition.displayName}...\n`
+    );
 
-    if (isUpdate) {
-      console.log('✅ Successfully updated AI Agent Skills!\n');
-    } else {
-      console.log('✅ Successfully installed AI Agent Skills!\n');
-    }
-    console.log(`📦 Location: ${ideConfigDir}/skills/\n`);
-    console.log('📋 Available skills:');
-    console.log('   • /brainstorm    - Ideation and feature exploration');
-    console.log('   • /create        - Build new features and components');
-    console.log('   • /debug         - Root-cause analysis and bug fixing');
-    console.log('   • /deploy        - Deployment and release preparation');
-    console.log('   • /enhance       - Improve and refactor existing code');
-    console.log('   • /orchestrate   - Multi-step coordinated planning');
-    console.log('   • /plan          - Implementation planning and breakdown');
-    console.log('   • /preview       - Preview expected output and UX');
-    console.log('   • /status        - Project status and progress summary');
-    console.log('   • /test          - Test strategy and coverage');
-    console.log('   • /ui-ux-pro-max - UI/UX improvements and design\n');
-    console.log('🎯 Next steps:');
-    console.log(`   1. Reopen your project in ${ideDisplay}`);
-    console.log('   2. Type "/" in chat to see available skills');
-    console.log('   3. Start using skills like /create, /debug, /enhance\n');
+    const result = installBundle({
+      baseDir,
+      ide,
+      scope,
+      version: CURRENT_VERSION,
+      includeCompatibilityAliases: true,
+    });
+
+    printInstallResult(result, installedVersion, scope);
   } catch (error) {
-    console.error('❌ Error installing skills:', error.message);
-    process.exit(1);
-  }
-}
-
-function installGlobal() {
-  const homeDir = os.homedir();
-  const ide = detectIDE();
-  const ideDisplay = getIDEDisplayName(ide);
-  const ideConfigDir = getIDEConfigDir(ide);
-  const globalSkillsPath = path.join(homeDir, ideConfigDir, 'skills');
-  const skillsSource = path.join(__dirname, '..', '.kiro', 'skills');
-
-  console.log(`🌍 Installing AI Agent Skills globally for ${ideDisplay}...\n`);
-
-  try {
-    if (!fs.existsSync(globalSkillsPath)) {
-      fs.mkdirSync(globalSkillsPath, { recursive: true });
-    }
-
-    copyDirectory(skillsSource, globalSkillsPath);
-
-    console.log('✅ Successfully installed skills globally!\n');
-    console.log('📍 Location: ' + globalSkillsPath + '\n');
-    console.log('🎯 Next steps:');
-    console.log(`   1. Restart ${ideDisplay}`);
-    console.log('   2. Skills will be available in all projects\n');
-  } catch (error) {
-    console.error('❌ Error installing global skills:', error.message);
+    console.error(`Error installing skills: ${error.message}`);
     process.exit(1);
   }
 }
 
 function showHelp() {
+  const skillNames = listSkillNames().map((name) => `/${name}`).join(', ');
+
   console.log(`
-AI Agent Skills CLI - Universal skills for AI-powered IDEs
+AI Agent Skills CLI
 
 Usage:
-  npx @votruongdanh/ai-agent-skills init                    Install skills (auto-detect IDE)
-  npx @votruongdanh/ai-agent-skills init --ide=<name>       Install for specific IDE
-  npx @votruongdanh/ai-agent-skills global                  Install skills globally
-  npx @votruongdanh/ai-agent-skills help                    Show this help message
+  npx ${PACKAGE_NAME} init
+  npx ${PACKAGE_NAME} init --ide=<name>
+  npx ${PACKAGE_NAME} global
+  npx ${PACKAGE_NAME} help
 
-Examples:
-  npx @votruongdanh/ai-agent-skills init --ide=antigravity  Force install for Antigravity
-  npx @votruongdanh/ai-agent-skills init --ide=cursor       Force install for Cursor
-  npx @votruongdanh/ai-agent-skills init --ide=kiro         Force install for Kiro
+Supported IDE values:
+  antigravity  -> .agent/workflows (+ agent/workflows compatibility alias)
+  kiro         -> .kiro/skills
+  cursor       -> .cursor/skills (+ legacy .cursor/rules)
+  vscode       -> .github/skills for VS Code agent mode
+  copilot      -> .github/skills for GitHub Copilot agent mode
+  generic      -> .kiro/skills fallback
 
-Supported IDEs (Auto-detected):
-  ✅ Antigravity    - agent/skills folder
-  ✅ Kiro           - .kiro/skills folder
-  ✅ Cursor         - .cursor/skills folder
-  ✅ Windsurf       - .windsurf/skills folder
-  ✅ Continue       - .continue/skills folder
-  ✅ Cody           - .cody/skills folder
-  ✅ GitHub Copilot - .github/copilot/skills folder
-  ✅ Aider          - .aider/skills folder
-  ✅ Tabnine        - .tabnine/skills folder
-  ✅ Others         - Uses Kiro format by default
+Primary install path:
+  npx ${PACKAGE_NAME} init
 
-Available Skills:
-  /brainstorm    - Ideation and feature exploration
-  /create        - Build new features and components
-  /debug         - Root-cause analysis and bug fixing
-  /deploy        - Deployment and release preparation
-  /enhance       - Improve and refactor existing code
-  /orchestrate   - Multi-step coordinated planning
-  /plan          - Implementation planning and breakdown
-  /preview       - Preview expected output and UX
-  /status        - Project status and progress summary
-  /test          - Test strategy and coverage
-  /ui-ux-pro-max - UI/UX improvements and design
+PowerShell wrapper (optional):
+  powershell -ExecutionPolicy Bypass -File .\\bin\\install-skills.ps1 -Ide vscode
+
+Available skills:
+  ${skillNames}
 
 Documentation: https://github.com/votruongdanh/ai-agent-skills
 `);
 }
 
+const command = process.argv[2];
+
 switch (command) {
   case 'init':
-    checkForUpdates(() => init());
+    checkForUpdates(() => install('project'));
     break;
   case 'global':
-    checkForUpdates(() => installGlobal());
+    checkForUpdates(() => install('global'));
     break;
   case 'help':
   case '--help':
@@ -309,7 +165,7 @@ switch (command) {
     showHelp();
     break;
   default:
-    console.log('❌ Unknown command. Use "init", "global", or "help".\n');
+    console.log('Unknown command. Use "init", "global", or "help".\n');
     showHelp();
     process.exit(1);
 }
