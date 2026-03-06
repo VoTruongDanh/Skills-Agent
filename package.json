@@ -1,6 +1,6 @@
 {
   "name": "@votruongdanh/ai-agent-skills",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Cross-IDE AI agent skills with native installers for Kiro, Cursor, Antigravity, and VS Code/Copilot",
   "main": "index.js",
   "bin": {
