@@ -43,6 +43,15 @@ After you publish, users can update by running:
 npx @votruongdanh/ai-agent-skills@latest init
 ```
 
+If IDE auto-detect is unclear, users can force the target IDE:
+
+```bash
+npx @votruongdanh/ai-agent-skills@latest init --ide=cursor
+npx @votruongdanh/ai-agent-skills@latest init --ide=antigravity
+npx @votruongdanh/ai-agent-skills@latest init --ide=vscode
+npx @votruongdanh/ai-agent-skills@latest init --ide=kiro
+```
+
 The CLI will automatically:
 - Detect if they have an older version
 - Show update notification

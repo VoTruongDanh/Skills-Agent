@@ -19,7 +19,10 @@ If auto-detection is ambiguous, force the target IDE:
 npx @votruongdanh/ai-agent-skills init --ide=cursor
 npx @votruongdanh/ai-agent-skills init --ide=antigravity
 npx @votruongdanh/ai-agent-skills init --ide=vscode
+npx @votruongdanh/ai-agent-skills init --ide=kiro
 ```
+
+The CLI now also searches parent folders, so running the command inside `src/`, `apps/web/`, or another subfolder can still detect the IDE marker from the workspace root.
 
 PowerShell wrapper is optional only. The package does not require PowerShell:
 
@@ -60,11 +63,12 @@ The installer now writes IDE-specific layouts instead of copying `.kiro` everywh
 
 ```bash
 npx @votruongdanh/ai-agent-skills init
-npx @votruongdanh/ai-agent-skills init --ide=generic
 npx @votruongdanh/ai-agent-skills init --ide=kiro
 npx @votruongdanh/ai-agent-skills init --ide=cursor
 npx @votruongdanh/ai-agent-skills init --ide=antigravity
 npx @votruongdanh/ai-agent-skills init --ide=vscode
+npx @votruongdanh/ai-agent-skills init --ide=copilot
+npx @votruongdanh/ai-agent-skills init --ide=generic
 npx @votruongdanh/ai-agent-skills global
 ```
 
@@ -72,6 +76,7 @@ Recommended:
 
 - Use `npx @votruongdanh/ai-agent-skills init` for normal online install.
 - Use `--ide=<name>` only when auto-detect picks the wrong target.
+- If you run the command from a nested folder, the CLI will try to install at the detected workspace root.
 - Ignore the PowerShell wrapper unless you specifically want a Windows shortcut.
 
 ## How the package is structured

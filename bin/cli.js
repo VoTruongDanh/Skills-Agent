@@ -4,7 +4,8 @@ const path = require('path');
 const https = require('https');
 
 const {
-  detectIDE,
+  findIDEContext,
+  findProjectRootForIDE,
   getAvailableIDENames,
   getIDEDefinition,
   getInstalledVersion,
@@ -50,20 +51,64 @@ function checkForUpdates(callback) {
     .on('error', () => callback());
 }
 
-function resolveIDE() {
+function resolveInstallContext() {
+  const cwd = process.cwd();
   const manualIDE = parseIDEFlag();
 
   if (manualIDE) {
     const normalized = normalizeIDEName(manualIDE);
     if (normalized) {
-      return normalized;
+      const projectMatch = findProjectRootForIDE(cwd, normalized);
+      return {
+        ide: normalized,
+        source: 'flag',
+        baseDir: projectMatch ? projectMatch.projectDir : cwd,
+        matchedPath: projectMatch ? projectMatch.matchedPath : null,
+      };
     }
 
     console.log(`Unknown IDE flag: ${manualIDE}`);
     console.log(`Supported values: ${getAvailableIDENames().join(', ')}\n`);
   }
 
-  return detectIDE(process.cwd());
+  const detected = findIDEContext(cwd);
+  return {
+    ide: detected.ide,
+    source: detected.source,
+    baseDir: detected.projectDir || cwd,
+    matchedPath: detected.matchedPath,
+  };
+}
+
+function printResolution(context) {
+  const ideDefinition = getIDEDefinition(context.ide);
+
+  if (context.source === 'flag') {
+    console.log(`Using IDE flag: ${ideDefinition.displayName}`);
+    if (context.matchedPath) {
+      console.log(`Workspace root: ${context.baseDir} (found ${context.matchedPath})\n`);
+    } else {
+      console.log(`Workspace root: ${context.baseDir}\n`);
+    }
+    return;
+  }
+
+  if (context.source === 'project') {
+    console.log(
+      `Auto-detected ${ideDefinition.displayName} from ${context.matchedPath} at ${context.baseDir}\n`
+    );
+    return;
+  }
+
+  if (context.source === 'global') {
+    console.log(
+      `Auto-detected ${ideDefinition.displayName} from global config ${context.matchedPath}\n`
+    );
+    return;
+  }
+
+  console.log('No IDE marker found. Falling back to generic SKILL.md layout.');
+  console.log('Tip: use --ide=cursor, --ide=antigravity, --ide=vscode, or --ide=kiro\n');
 }
 
 function printInstallResult(result, previousVersion, scope) {
@@ -89,14 +134,16 @@ function printInstallResult(result, previousVersion, scope) {
 
 function install(scope) {
   try {
-    const ide = resolveIDE();
-    const ideDefinition = getIDEDefinition(ide);
-    const baseDir = process.cwd();
+    const context = resolveInstallContext();
+    const ideDefinition = getIDEDefinition(context.ide);
+    const baseDir = scope === 'global' ? process.cwd() : context.baseDir;
     const rootDir =
       scope === 'global'
         ? ideDefinition.globalRoot
         : path.join(baseDir, ideDefinition.projectRoot);
     const installedVersion = getInstalledVersion(rootDir);
+
+    printResolution(context);
 
     console.log(
       `${installedVersion ? 'Updating' : 'Installing'} AI Agent Skills for ${ideDefinition.displayName}...\n`
@@ -104,7 +151,7 @@ function install(scope) {
 
     const result = installBundle({
       baseDir,
-      ide,
+      ide: context.ide,
       scope,
       version: CURRENT_VERSION,
       includeCompatibilityAliases: true,
@@ -139,6 +186,12 @@ Supported IDE values:
 
 Primary install path:
   npx ${PACKAGE_NAME} init
+
+Force a specific IDE:
+  npx ${PACKAGE_NAME} init --ide=cursor
+  npx ${PACKAGE_NAME} init --ide=antigravity
+  npx ${PACKAGE_NAME} init --ide=vscode
+  npx ${PACKAGE_NAME} init --ide=kiro
 
 PowerShell wrapper (optional):
   powershell -ExecutionPolicy Bypass -File .\\bin\\install-skills.ps1 -Ide vscode

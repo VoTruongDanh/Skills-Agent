@@ -9,6 +9,7 @@ const os = require('os');
 const path = require('path');
 
 const {
+  findIDEContext,
   getIDEDefinition,
   installBundle,
   listSkillNames,
@@ -126,6 +127,29 @@ const checks = [
         }
 
         return true;
+      } finally {
+        fs.rmSync(tempRoot, { recursive: true, force: true });
+      }
+    }
+  },
+  {
+    name: 'findIDEContext detects IDE markers from parent workspace folders',
+    test: () => {
+      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-detect-'));
+
+      try {
+        const workspaceRoot = path.join(tempRoot, 'workspace');
+        const nestedDir = path.join(workspaceRoot, 'apps', 'web');
+        fs.mkdirSync(path.join(workspaceRoot, '.cursor'), { recursive: true });
+        fs.mkdirSync(nestedDir, { recursive: true });
+
+        const result = findIDEContext(nestedDir);
+        return (
+          result.ide === 'cursor' &&
+          result.source === 'project' &&
+          result.projectDir === workspaceRoot &&
+          result.matchedPath === '.cursor'
+        );
       } finally {
         fs.rmSync(tempRoot, { recursive: true, force: true });
       }
