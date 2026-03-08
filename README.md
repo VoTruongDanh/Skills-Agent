@@ -38,10 +38,8 @@ For CI/CD or scripting, pass `--ide` to skip prompts:
 
 ```bash
 npx @votruongdanh/ai-agent-skills init --ide=cursor
-npx @votruongdanh/ai-agent-skills init --ide=vscode
 npx @votruongdanh/ai-agent-skills init --ide=kiro
 npx @votruongdanh/ai-agent-skills init --ide=antigravity
-npx @votruongdanh/ai-agent-skills init --ide=copilot
 npx @votruongdanh/ai-agent-skills init --no-interactive
 ```
 
@@ -91,9 +89,6 @@ The `add` command:
 | Cursor legacy | `.cursor/rules/<skill>.mdc` | Generated compatibility layer |
 | Antigravity | `.agent/workflows/<skill>.md` | Generated workflow bridge |
 | Antigravity legacy | `agent/workflows/<skill>.md` | Compatibility alias for older setups |
-| VS Code / GitHub Copilot | `.github/skills/<skill>/SKILL.md` | Native agent skills |
-| Global Copilot | `~/.copilot/skills/<skill>/SKILL.md` | Used by `global` install |
-| Cross-client | `.agents/skills/<skill>/SKILL.md` | agentskills.io interop standard |
 
 Native skill targets keep the full skill directory. Generated compatibility targets (Cursor `.mdc` rules, Antigravity workflows) only render `SKILL.md` content — companion `scripts/`, `references/`, and `assets/` remain native-only.
 

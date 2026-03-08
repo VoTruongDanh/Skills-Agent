@@ -206,11 +206,8 @@ async function interactiveInit() {
     if (!selectedIDE) {
       const ideOptions = [
         { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
-        { label: 'VS Code', value: 'vscode', description: '.github/skills' },
         { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
         { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
-        { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
-        { label: 'Generic', value: 'generic', description: '.kiro/skills (fallback)' },
       ];
       const choice = await selectMenu(rl, '🔧 Choose your IDE:', ideOptions);
       selectedIDE = choice.value;
@@ -393,10 +390,8 @@ async function addSkillFromGitHub() {
       } else {
         const ideOptions = [
           { label: 'Cursor', value: 'cursor', description: '.cursor/skills', recommended: true },
-          { label: 'VS Code', value: 'vscode', description: '.github/skills' },
           { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
           { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
-          { label: '.agents/skills (cross-client)', value: 'agents', description: '.agents/skills' },
         ];
         const ideChoice = await selectMenu(rl, '🔧 Install to:', ideOptions);
         targetIDE = ideChoice.value;
@@ -496,7 +491,7 @@ function printResolution(context) {
   }
 
   console.log(warn('No IDE marker found. Falling back to generic SKILL.md layout.'));
-  console.log(info(`Tip: use ${c.cyan}--ide=cursor${c.reset}, ${c.cyan}--ide=antigravity${c.reset}, ${c.cyan}--ide=vscode${c.reset}, or ${c.cyan}--ide=kiro${c.reset}\n`));
+  console.log(info(`Tip: use ${c.cyan}--ide=cursor${c.reset}, ${c.cyan}--ide=kiro${c.reset}, or ${c.cyan}--ide=antigravity${c.reset}\n`));
 }
 
 function dedupeWarnings(warnings) {
@@ -727,11 +722,8 @@ ${c.bold}GitHub Add Examples:${c.reset}
 ${c.bold}Supported IDEs:${c.reset}
 
   ${c.cyan}cursor${c.reset}       ${c.dim}→ .cursor/skills + .cursor/rules${c.reset}
-  ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills for VS Code agent mode${c.reset}
-  ${c.cyan}copilot${c.reset}      ${c.dim}→ .github/skills for GitHub Copilot agent mode${c.reset}
   ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
   ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
-  ${c.cyan}generic${c.reset}      ${c.dim}→ .kiro/skills fallback${c.reset}
 
 ${c.bold}Available skills:${c.reset}
   ${skillNames}
