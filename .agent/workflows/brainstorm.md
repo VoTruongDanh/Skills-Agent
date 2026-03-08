@@ -1,25 +1,37 @@
 ---
-description: Help explore many realistic options before implementation
+description: "Help explore many realistic options before implementation"
+agents: [project-planner, orchestrator]
 ---
 
-## Goal
-Help the user explore many realistic options before implementation.
+> **Canonical source**: `.kiro/skills/brainstorm/SKILL.md` — read it for full workflow details.
 
-## Workflow
-1. Restate the problem in one or two sentences.
-2. Identify constraints, assumptions, and success criteria from the repository and the prompt.
-3. Produce 3-7 strong options with pros, cons, complexity, and risks.
-4. Call out the most practical option and the boldest option.
-5. End with a recommended next step or implementation path.
+## Memory Protocol
+**START**: Read `.ai-memory.md` for project context. **END**: Update with options explored and decisions.
+
+## Steps
+1. 🤖 **Agent**: Applying @project-planner knowledge
+2. **Read Memory** — Load `.ai-memory.md`
+3. **Socratic Gate** — Ask if unclear: What problem? What constraints? Who are users?
+4. **Restate** the problem in 1-2 sentences
+5. **Identify** constraints, assumptions, success criteria
+6. **Generate** 3-7 options with pros, cons, complexity, risk
+7. **Highlight** most practical + boldest option
+8. **Recommend** next step or implementation path
+9. **Update Memory** — Save findings to `.ai-memory.md`
 
 ## Output format
 - Problem framing
 - Constraints
-- Options
+- Options (3-7 with pros/cons/complexity/risk)
 - Recommendation
 - Next step
 
-## Rules
-- Prefer practical ideas grounded in the current project.
-- Avoid pretending uncertain assumptions are facts.
-- If code context matters, inspect the repo structure first.
+## Checklist
+- [ ] Problem restated
+- [ ] Constraints identified
+- [ ] 3+ options generated
+- [ ] Practical + bold highlighted
+- [ ] Next step recommended
+- [ ] Memory updated
+
+## Related: `/plan`, `/create`, `/orchestrate`

@@ -1,3 +1,5 @@
+> **Canonical source**: `.kiro/skills/enhance/SKILL.md` — read it for full details, agent routing, and memory protocol.
+
 ## Goal
 Improve an existing implementation without breaking working behavior.
 

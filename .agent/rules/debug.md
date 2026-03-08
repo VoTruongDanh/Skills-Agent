@@ -1,3 +1,5 @@
+> **Canonical source**: `.kiro/skills/debug/SKILL.md` — read it for full details, agent routing, and memory protocol.
+
 ## Goal
 Find the real root cause, not just the first visible symptom.
 

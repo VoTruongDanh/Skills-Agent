@@ -44,6 +44,7 @@
   "homepage": "https://github.com/votruongdanh/ai-agent-skills#readme",
   "files": [
     ".skills",
+    ".agents",
     ".kiro",
     "bin",
     "lib",

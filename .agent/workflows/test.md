@@ -1,19 +1,32 @@
 ---
-description: Write tests, test strategy, coverage improvements, and validation steps
+description: "Write tests, test strategy, coverage improvements, and validation steps"
+agents: [test-engineer, backend-specialist]
 ---
 
-## Goal
-Write tests, test strategy, coverage improvements, and validation steps.
+> **Canonical source**: `.kiro/skills/test/SKILL.md` — read it for full workflow details.
 
-## Workflow
-1. Understand what needs to be tested (feature, bug fix, edge case).
-2. Identify the appropriate test type (unit, integration, e2e).
-3. Write test cases covering happy path and edge cases.
-4. Suggest coverage improvements if applicable.
-5. Provide instructions to run the tests.
+## Memory Protocol
+**START**: Read `.ai-memory.md` for test framework, coverage status, past failures. **END**: Update with tests written and coverage changes.
 
-## Rules
-- Test behavior, not implementation details.
-- Cover edge cases and error conditions.
-- Keep tests fast and isolated.
-- Use descriptive test names.
+## Steps
+1. 🤖 **Agent**: Applying @test-engineer knowledge
+2. **Read Memory** — Load `.ai-memory.md`
+3. **Socratic Gate** — Ask if unclear: What to test? Test type (unit/integration/e2e)? Framework in use?
+4. **Understand** what needs testing (feature, bug fix, edge case)
+5. **Identify** appropriate test type
+6. **Write** test cases covering happy path + edge cases + error conditions
+7. **Suggest** coverage improvements
+8. **Provide** instructions to run tests
+9. **Update Memory** — Save test results to `.ai-memory.md`
+
+## Checklist
+- [ ] Test scope understood
+- [ ] Test type chosen
+- [ ] Happy path covered
+- [ ] Edge cases covered
+- [ ] Error conditions covered
+- [ ] Tests are fast and isolated
+- [ ] Run instructions provided
+- [ ] Memory updated
+
+## Related: `/debug`, `/create`, `/enhance`

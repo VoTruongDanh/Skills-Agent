@@ -79,15 +79,17 @@ const checks = [
     test: () => CANONICAL_SKILL_ROOTS.some((root) => fs.existsSync(root)),
   },
   {
-    name: 'All 12 bundled skills are discoverable',
+    name: 'All 14 bundled skills are discoverable',
     test: () => {
       const expectedSkills = [
+        'agents',
         'brainstorm',
         'clean',
         'create',
         'debug',
         'deploy',
         'enhance',
+        'explain',
         'orchestrate',
         'plan',
         'preview',
@@ -122,6 +124,7 @@ const checks = [
       return (
         pkg.files &&
         pkg.files.includes('.skills') &&
+        pkg.files.includes('.agents') &&
         pkg.files.includes('.kiro') &&
         pkg.files.includes('lib') &&
         pkg.files.includes('bin')
@@ -370,6 +373,219 @@ description: Asset demo
         parsed.skills.some((skill) => skill.slug === 'plan') &&
         Array.isArray(parsed.diagnostics)
       );
+    },
+  },
+  {
+    name: 'Agent routing skill has agents frontmatter',
+    test: () => {
+      const skill = readSkill('agents');
+      return (
+        skill.slug === 'agents' &&
+        skill.description &&
+        skill.body.includes('Agent Selection')
+      );
+    },
+  },
+  {
+    name: 'Agent persona files exist',
+    test: () => {
+      const agentsDir = path.join('.kiro', 'skills', 'agents', 'agents');
+      if (!fs.existsSync(agentsDir)) return false;
+      const files = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
+      return files.length >= 10;
+    },
+  },
+  {
+    name: '_scripts supplementary directory exists',
+    test: () => {
+      const scriptsDir = path.join('.kiro', 'skills', '_scripts');
+      return (
+        fs.existsSync(scriptsDir) &&
+        fs.existsSync(path.join(scriptsDir, 'checklist.md')) &&
+        fs.existsSync(path.join(scriptsDir, 'verify-all.md')) &&
+        fs.existsSync(path.join(scriptsDir, 'pre-deploy.md'))
+      );
+    },
+  },
+  {
+    name: 'Skills with agents frontmatter have valid arrays',
+    test: () => {
+      const catalog = getSkillCatalog();
+      const skillsWithAgents = catalog.filter((s) => s.agents);
+      return (
+        skillsWithAgents.length >= 1 &&
+        skillsWithAgents.every((s) => Array.isArray(s.agents) && s.agents.length > 0)
+      );
+    },
+  },
+  {
+    name: 'CLI status command runs without error',
+    test: () => {
+      const output = runCli(['status']);
+      return output.includes('AI Agent Skills Status') && output.includes('Skills:');
+    },
+  },
+  {
+    name: 'AGENT_FLOW.md documentation exists',
+    test: () => {
+      return (
+        fs.existsSync('docs/AGENT_FLOW.md') &&
+        fs.readFileSync('docs/AGENT_FLOW.md', 'utf8').includes('Agent Flow')
+      );
+    },
+  },
+  {
+    name: 'Entry-point instructions.md exists with routing table',
+    test: () => {
+      const file = path.join('.kiro', 'skills', 'instructions.md');
+      if (!fs.existsSync(file)) return false;
+      const content = fs.readFileSync(file, 'utf8');
+      return (
+        content.includes('.kiro/skills/debug/SKILL.md') &&
+        content.includes('.kiro/skills/agents/agents/debugger.md') &&
+        content.includes('vague') &&
+        content.includes('_scripts/checklist.md')
+      );
+    },
+  },
+  {
+    name: 'All skills reference agent files by real path',
+    test: () => {
+      const catalog = getSkillCatalog();
+      const skillsWithRouting = catalog.filter((s) => s.slug !== 'agents' && s.body.includes('Agent Routing'));
+      return skillsWithRouting.every((s) =>
+        s.body.includes('.kiro/skills/agents/agents/') && !s.body.match(/→ apply @\w/)
+      );
+    },
+  },
+  {
+    name: 'All skills reference related skills by real path',
+    test: () => {
+      const catalog = getSkillCatalog();
+      const skillsWithRelated = catalog.filter((s) => s.body.includes('Related Skills'));
+      return skillsWithRelated.every((s) => s.body.includes('.kiro/skills/') && s.body.includes('/SKILL.md'));
+    },
+  },
+  {
+    name: 'All skills have Quality Gate referencing _scripts',
+    test: () => {
+      const catalog = getSkillCatalog();
+      const domainSkills = catalog.filter((s) => s.slug !== 'agents');
+      return domainSkills.every((s) => s.body.includes('_scripts/'));
+    },
+  },
+  {
+    name: '.ai-memory-template.md exists in _scripts',
+    test: () => {
+      return fs.existsSync(path.join('.kiro', 'skills', '_scripts', '.ai-memory-template.md'));
+    },
+  },
+  {
+    name: 'All workflows reference their canonical SKILL.md',
+    test: () => {
+      const workflowDir = path.join('.agent', 'workflows');
+      if (!fs.existsSync(workflowDir)) return false;
+      const files = fs.readdirSync(workflowDir).filter((f) => f.endsWith('.md'));
+      return files.every((f) => {
+        const content = fs.readFileSync(path.join(workflowDir, f), 'utf8');
+        return content.includes('Canonical source');
+      });
+    },
+  },
+  {
+    name: 'Agent router has vague-request fallback table',
+    test: () => {
+      const skill = readSkill('agents');
+      return (
+        skill.body.includes('Vague / General Request Fallback') &&
+        skill.body.includes('Help me') &&
+        skill.body.includes('Review my code') &&
+        skill.body.includes('Never skip routing for general requests')
+      );
+    },
+  },
+  {
+    name: 'Explain skill exists with proper structure',
+    test: () => {
+      const skill = readSkill('explain');
+      return (
+        skill.slug === 'explain' &&
+        skill.description.includes('explain') &&
+        skill.body.includes('Socratic Gate') &&
+        skill.body.includes('Agent Routing') &&
+        skill.body.includes('.kiro/skills/agents/agents/')
+      );
+    },
+  },
+  {
+    name: 'Instructions.md has greeting/empty input handling (step 0)',
+    test: () => {
+      const file = path.join('.kiro', 'skills', 'instructions.md');
+      const content = fs.readFileSync(file, 'utf8');
+      return (
+        content.includes('Validate input') &&
+        content.includes('greeting') &&
+        content.includes('empty')
+      );
+    },
+  },
+  {
+    name: 'Agent router has Vietnamese trigger keywords',
+    test: () => {
+      const skill = readSkill('agents');
+      return (
+        skill.body.includes('sửa') &&
+        skill.body.includes('tạo trang') &&
+        skill.body.includes('triển khai') &&
+        skill.body.includes('giải thích')
+      );
+    },
+  },
+  {
+    name: 'Agent router has compound-keyword routing rules',
+    test: () => {
+      const skill = readSkill('agents');
+      return (
+        skill.body.includes('Compound Keyword Rules') &&
+        skill.body.includes('test + fail') &&
+        skill.body.includes('review + code')
+      );
+    },
+  },
+  {
+    name: 'Instructions.md routes explain and complaint requests',
+    test: () => {
+      const file = path.join('.kiro', 'skills', 'instructions.md');
+      const content = fs.readFileSync(file, 'utf8');
+      return (
+        content.includes('/explain') &&
+        content.includes('explain/SKILL.md') &&
+        content.includes('Complaints about code')
+      );
+    },
+  },
+  {
+    name: 'Explain workflow exists with canonical source',
+    test: () => {
+      const workflowFile = path.join('.agent', 'workflows', 'explain.md');
+      if (!fs.existsSync(workflowFile)) return false;
+      const content = fs.readFileSync(workflowFile, 'utf8');
+      return content.includes('Canonical source') && content.includes('explain/SKILL.md');
+    },
+  },
+  {
+    name: 'CANONICAL_SKILL_ROOTS includes .agents/skills for cross-client interop',
+    test: () => {
+      return CANONICAL_SKILL_ROOTS.includes('.agents/skills');
+    },
+  },
+  {
+    name: 'Skill descriptions include Vietnamese trigger keywords',
+    test: () => {
+      const catalog = getSkillCatalog();
+      const viKeywords = ['lỗi', 'tạo', 'triển khai', 'kế hoạch', 'giải thích', 'kiểm thử', 'giao diện'];
+      const descs = catalog.map((s) => s.description).join(' ');
+      return viKeywords.every((kw) => descs.includes(kw));
     },
   },
 ];

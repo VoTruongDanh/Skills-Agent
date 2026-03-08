@@ -279,6 +279,42 @@ function listSkills() {
   }
 }
 
+function statusReport() {
+  try {
+    const context = resolveInstallContext();
+    const ideDefinition = getIDEDefinition(context.ide);
+    const rootDir = path.join(context.baseDir, ideDefinition.projectRoot);
+    const installedVersion = getInstalledVersion(rootDir);
+    const catalogResult = getSkillCatalog({ includeDiagnostics: true });
+
+    console.log('=== AI Agent Skills Status ===\n');
+    console.log(`Package: ${PACKAGE_NAME}`);
+    console.log(`Bundle version: ${CURRENT_VERSION}`);
+    console.log(`Installed version: ${installedVersion || 'not installed'}`);
+    console.log(`IDE: ${ideDefinition.displayName}`);
+    console.log(`Workspace: ${context.baseDir}`);
+    console.log(`Skills: ${catalogResult.skills.length}`);
+
+    const agentSkill = catalogResult.skills.find((s) => s.slug === 'agents');
+    if (agentSkill && agentSkill.agents) {
+      console.log(`Agent routing: enabled`);
+    }
+
+    const needsUpdate = installedVersion && installedVersion !== CURRENT_VERSION;
+    console.log(`Update needed: ${needsUpdate ? 'yes' : 'no'}`);
+
+    if (catalogResult.diagnostics.length) {
+      console.log('');
+      printWarnings(catalogResult.diagnostics);
+    }
+
+    console.log('');
+  } catch (error) {
+    console.error(`Error getting status: ${error.message}`);
+    process.exit(1);
+  }
+}
+
 function showHelp() {
   const skillNames = listSkillNames().map((name) => `/${name}`).join(', ');
 
@@ -291,6 +327,7 @@ Usage:
   npx ${PACKAGE_NAME} global
   npx ${PACKAGE_NAME} list
   npx ${PACKAGE_NAME} list --json
+  npx ${PACKAGE_NAME} status
   npx ${PACKAGE_NAME} help
 
 Supported IDE values:
@@ -344,13 +381,19 @@ switch (command) {
   case 'list':
     listSkills();
     break;
+  case 'status':
+    statusReport();
+    break;
+  case 'update':
+    checkForUpdates(() => install('project'));
+    break;
   case 'help':
   case '--help':
   case '-h':
     showHelp();
     break;
   default:
-    console.log('Unknown command. Use "init", "global", "list", or "help".\n');
+    console.log('Unknown command. Use "init", "global", "list", "status", "update", or "help".\n');
     showHelp();
     process.exit(1);
 }

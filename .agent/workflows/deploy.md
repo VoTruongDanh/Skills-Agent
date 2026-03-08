@@ -1,19 +1,32 @@
 ---
-description: Deployment steps, release preparation, environment setup, and CI/CD guidance
+description: "Deployment steps, release preparation, environment setup, and CI/CD guidance"
+agents: [devops-engineer, security-auditor]
 ---
 
-## Goal
-Guide deployment and release preparation with minimal risk.
+> **Canonical source**: `.kiro/skills/deploy/SKILL.md` — read it for full workflow details.
 
-## Workflow
-1. Review the current deployment setup and target environment.
-2. Identify deployment prerequisites (env vars, secrets, dependencies).
-3. Outline deployment steps in order.
-4. Suggest rollback procedures.
-5. Recommend monitoring and verification steps post-deployment.
+## Memory Protocol
+**START**: Read `.ai-memory.md` for past deploys, env details, known issues. **END**: Update with deploy config, outcomes, lessons.
 
-## Rules
-- Always include rollback instructions.
-- Verify environment variables and secrets are documented.
-- Suggest smoke tests after deployment.
-- Consider zero-downtime strategies when applicable.
+## Steps
+1. 🤖 **Agent**: Applying @devops-engineer + @security-auditor knowledge
+2. **Read Memory** — Load `.ai-memory.md`
+3. **Socratic Gate** — Ask if missing: Target env? Secrets ready? Rollback plan?
+4. **Review** current deployment setup and target environment
+5. **Identify** prerequisites (env vars, secrets, dependencies)
+6. **Outline** deployment steps in order
+7. **Define** rollback procedures
+8. **Security check** — Verify no secrets in code, proper access controls
+9. **Recommend** monitoring and smoke tests post-deployment
+10. **Update Memory** — Save deploy details to `.ai-memory.md`
+
+## Checklist
+- [ ] Target environment confirmed
+- [ ] Prerequisites documented
+- [ ] Deployment steps ordered
+- [ ] Rollback plan defined
+- [ ] Secrets verified secure
+- [ ] Smoke tests suggested
+- [ ] Memory updated
+
+## Related: `/plan`, `/test`, `/status`

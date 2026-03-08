@@ -1,3 +1,5 @@
+> **Canonical source**: `.kiro/skills/brainstorm/SKILL.md` — read it for full details, agent routing, and memory protocol.
+
 ## Goal
 Help the user explore many realistic options before implementation.
 

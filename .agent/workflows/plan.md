@@ -1,19 +1,32 @@
 ---
-description: Create a concrete implementation plan with milestones and task breakdown
+description: "Create a concrete implementation plan with milestones and task breakdown"
+agents: [project-planner, orchestrator]
 ---
 
-## Goal
-Create a concrete implementation plan with milestones and task breakdown.
+> **Canonical source**: `.kiro/skills/plan/SKILL.md` — read it for full workflow details.
 
-## Workflow
-1. Understand the feature or change request.
-2. Break it down into logical milestones.
-3. For each milestone, list specific tasks.
-4. Identify risks and dependencies.
-5. Suggest an order of implementation.
+## Memory Protocol
+**START**: Read `.ai-memory.md` for project context, past plans, constraints. **END**: Update with plan details and milestones.
 
-## Rules
-- Keep tasks small and testable.
-- Identify blockers early.
-- Suggest incremental delivery where possible.
-- Include testing and documentation tasks.
+## Steps
+1. 🤖 **Agent**: Applying @project-planner knowledge
+2. **Read Memory** — Load `.ai-memory.md`
+3. **Socratic Gate** — Ask if unclear: What’s the scope? Deadline constraints? Must-haves vs nice-to-haves?
+4. **Understand** the feature or change request
+5. **Break down** into logical milestones
+6. **List** specific tasks for each milestone
+7. **Identify** risks and dependencies
+8. **Suggest** implementation order (incremental delivery)
+9. **Include** testing and documentation tasks
+10. **Update Memory** — Save plan to `.ai-memory.md`
+
+## Checklist
+- [ ] Requirement understood
+- [ ] Milestones defined
+- [ ] Tasks are small and testable
+- [ ] Risks identified
+- [ ] Dependencies mapped
+- [ ] Incremental delivery suggested
+- [ ] Memory updated
+
+## Related: `/brainstorm`, `/create`, `/orchestrate`

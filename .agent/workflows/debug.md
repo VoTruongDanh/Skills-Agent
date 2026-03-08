@@ -1,28 +1,42 @@
 ---
-description: Find the real root cause, not just the first visible symptom
+description: "Find the real root cause, not just the first visible symptom"
+agents: [debugger, backend-specialist, frontend-specialist]
 ---
 
-## Goal
-Find the real root cause, not just the first visible symptom.
+> **Canonical source**: `.kiro/skills/debug/SKILL.md` — read it for full workflow details.
 
-## Workflow
-1. Summarize the bug, expected behavior, and actual behavior.
-2. Gather evidence from logs, stack traces, code paths, config, and recent changes.
-3. List the top hypotheses ranked by likelihood.
-4. Eliminate hypotheses using direct evidence.
-5. Identify the root cause.
-6. Propose the smallest safe fix.
-7. Suggest how to verify the fix and prevent regressions.
+## Memory Protocol
+**START**: Read `.ai-memory.md` for past bugs, fixes, known issues. **END**: Update with root cause, fix applied, lessons learned.
+
+## Steps
+1. 🤖 **Agent**: Applying @debugger knowledge (+ domain specialist as needed)
+2. **Read Memory** — Load `.ai-memory.md`
+3. **Socratic Gate** — Ask if missing: Expected vs actual? Log/stacktrace? When started?
+4. **Summarize** bug, expected behavior, actual behavior
+5. **Gather** evidence from logs, stack traces, code, config, recent changes
+6. **Hypothesize** — List top causes ranked by likelihood
+7. **Eliminate** — Use evidence to narrow down
+8. **Root Cause** — Confirm with evidence
+9. **Fix** — Propose smallest safe change
+10. **Verify** — How to test fix + prevent regression
+11. **Update Memory** — Save root cause and fix to `.ai-memory.md`
 
 ## Output format
 - Symptom
 - Evidence
-- Hypotheses
+- Hypotheses (ranked)
 - Root cause
 - Fix
-- Verification
+- Verification + regression prevention
 
-## Rules
-- Do not guess when evidence is missing; say what must be checked.
-- Prefer deterministic reproduction steps.
-- Mention any hidden risk or side effect of the fix.
+## Checklist
+- [ ] Bug described (expected vs actual)
+- [ ] Evidence gathered
+- [ ] Hypotheses ranked
+- [ ] Root cause confirmed
+- [ ] Fix is minimal and safe
+- [ ] No side effects
+- [ ] Verification steps provided
+- [ ] Memory updated
+
+## Related: `/test`, `/enhance`, `/status`
