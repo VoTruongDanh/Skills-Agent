@@ -604,6 +604,28 @@ description: Asset demo
       );
     },
   },
+  {
+    name: 'Cursor agents.mdc and instructions.mdc use alwaysApply: true for auto-routing',
+    test: () => {
+      const tmpDir = path.join(os.tmpdir(), 'verify-autoroute-' + Date.now());
+      fs.mkdirSync(path.join(tmpDir, '.cursor'), { recursive: true });
+      const { installBundle } = require('./lib/skill-bundle');
+      installBundle({ baseDir: tmpDir, ide: 'cursor', scope: 'project', version: 'test' });
+
+      const agentsRule = fs.readFileSync(path.join(tmpDir, '.cursor', 'rules', 'agents.mdc'), 'utf8');
+      const instructionsRule = fs.readFileSync(path.join(tmpDir, '.cursor', 'rules', 'instructions.mdc'), 'utf8');
+      const debugRule = fs.readFileSync(path.join(tmpDir, '.cursor', 'rules', 'debug.mdc'), 'utf8');
+
+      // Cleanup
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+
+      return (
+        agentsRule.includes('alwaysApply: true') &&
+        instructionsRule.includes('alwaysApply: true') &&
+        debugRule.includes('alwaysApply: false')
+      );
+    },
+  },
 ];
 
 let passed = 0;
