@@ -43,13 +43,21 @@ After you publish, users can update by running:
 npx @votruongdanh/ai-agent-skills@latest init
 ```
 
-If IDE auto-detect is unclear, users can force the target IDE:
+The CLI is now interactive by default — it will auto-detect the IDE and ask for confirmation.
+
+For non-interactive mode (CI/CD), use flags:
 
 ```bash
 npx @votruongdanh/ai-agent-skills@latest init --ide=cursor
 npx @votruongdanh/ai-agent-skills@latest init --ide=antigravity
 npx @votruongdanh/ai-agent-skills@latest init --ide=vscode
 npx @votruongdanh/ai-agent-skills@latest init --ide=kiro
+```
+
+Users can also add skills from GitHub repositories:
+
+```bash
+npx @votruongdanh/ai-agent-skills@latest add owner/repo
 ```
 
 The CLI will automatically:

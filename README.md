@@ -1,38 +1,88 @@
 # AI Agent Skills
 
-Cross-IDE AI agent skills with dual-source `SKILL.md` discovery and installers that render the right layout for each IDE.
+Cross-IDE AI agent skills with interactive CLI, dual-source `SKILL.md` discovery, GitHub skill fetching, and installers that render the right layout for each IDE.
 
 [![npm version](https://img.shields.io/npm/v/@votruongdanh/ai-agent-skills.svg)](https://www.npmjs.com/package/@votruongdanh/ai-agent-skills)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Quick install
+## Quick Install
 
 ```bash
 npx @votruongdanh/ai-agent-skills init
 ```
 
-This is the primary online install path for any machine with Node.js.
+The CLI launches an **interactive setup** — it auto-detects your IDE, lets you choose from a menu, and picks project vs global scope:
 
-If auto-detection is ambiguous, force the target IDE:
+```
+ AI Agent Skills  v3.2.0
+
+ℹ Auto-detected Cursor from .cursor
+  Use Cursor? (y/n): y
+
+📂 Install scope:
+  1) This project only    ← recommended
+  2) Global (all projects)
+
+[1] Installing skills...
+✔ 14 skills installed for Cursor
+
+Done! Next steps:
+  1. Reopen Cursor
+  2. Open agent chat and type / to list skills
+  3. Try: /create, /debug, /explain, or /plan
+```
+
+### Non-interactive mode
+
+For CI/CD or scripting, pass `--ide` to skip prompts:
 
 ```bash
 npx @votruongdanh/ai-agent-skills init --ide=cursor
-npx @votruongdanh/ai-agent-skills init --ide=antigravity
 npx @votruongdanh/ai-agent-skills init --ide=vscode
 npx @votruongdanh/ai-agent-skills init --ide=kiro
+npx @votruongdanh/ai-agent-skills init --ide=antigravity
+npx @votruongdanh/ai-agent-skills init --ide=copilot
+npx @votruongdanh/ai-agent-skills init --no-interactive
 ```
 
-The CLI now also searches parent folders, so running the command inside `src/`, `apps/web/`, or another subfolder can still detect the IDE marker from the workspace root.
+The CLI also searches parent folders, so running from `src/` or `apps/web/` still detects the IDE marker at the workspace root.
 
-PowerShell wrapper is optional only. The package does not require PowerShell:
+## Add Skills from GitHub
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\bin\install-skills.ps1 -Ide vscode
+Fetch skills directly from any GitHub repository:
+
+```bash
+# Browse and pick skills interactively
+npx @votruongdanh/ai-agent-skills add owner/repo
+
+# Install a specific skill
+npx @votruongdanh/ai-agent-skills add anthropics/skills --skill=pdf-processing
+
+# Specify branch and target IDE
+npx @votruongdanh/ai-agent-skills add anthropics/skills --ide=cursor --branch=main
 ```
 
-## What is actually supported
+The `add` command:
+- Fetches the GitHub repo tree via API
+- Lists all `SKILL.md` files found
+- Lets you pick one skill or install all
+- Downloads companion `scripts/`, `references/`, `assets/` directories
+- Installs to your chosen IDE format and scope
 
-The installer now writes IDE-specific layouts instead of copying `.kiro` everywhere.
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `npx @votruongdanh/ai-agent-skills init` | Interactive setup (choose IDE + scope) |
+| `npx @votruongdanh/ai-agent-skills init --ide=cursor` | Non-interactive install for specific IDE |
+| `npx @votruongdanh/ai-agent-skills global` | Install globally for all projects |
+| `npx @votruongdanh/ai-agent-skills add owner/repo` | Add skills from a GitHub repository |
+| `npx @votruongdanh/ai-agent-skills list` | List all bundled skills |
+| `npx @votruongdanh/ai-agent-skills list --json` | JSON output for scripts |
+| `npx @votruongdanh/ai-agent-skills status` | Show install status & versions |
+| `npx @votruongdanh/ai-agent-skills help` | Show help |
+
+## Supported IDEs
 
 | IDE | Installed layout | Notes |
 | --- | --- | --- |
@@ -43,77 +93,89 @@ The installer now writes IDE-specific layouts instead of copying `.kiro` everywh
 | Antigravity legacy | `agent/workflows/<skill>.md` | Compatibility alias for older setups |
 | VS Code / GitHub Copilot | `.github/skills/<skill>/SKILL.md` | Native agent skills |
 | Global Copilot | `~/.copilot/skills/<skill>/SKILL.md` | Used by `global` install |
+| Cross-client | `.agents/skills/<skill>/SKILL.md` | agentskills.io interop standard |
 
-Native skill targets keep the full skill directory. Generated compatibility targets such as Cursor `.mdc` rules and Antigravity workflows only render `SKILL.md` content, so companion `scripts/`, `references/`, and `assets/` remain native-only.
+Native skill targets keep the full skill directory. Generated compatibility targets (Cursor `.mdc` rules, Antigravity workflows) only render `SKILL.md` content — companion `scripts/`, `references/`, and `assets/` remain native-only.
 
-## Available skills
+## Available Skills (14)
 
-- `/brainstorm`
-- `/clean`
-- `/create`
-- `/debug`
-- `/deploy`
-- `/enhance`
-- `/orchestrate`
-- `/plan`
-- `/preview`
-- `/status`
-- `/test`
-- `/ui-ux-pro-max`
+| Skill | Description |
+|-------|-------------|
+| `/agents` | Agent routing — auto-selects specialist agent per request |
+| `/brainstorm` | Ideation, option generation, feature exploration |
+| `/clean` | Clean junk files, caches, AI artifacts |
+| `/create` | Build new features, files, components, endpoints |
+| `/debug` | Root-cause analysis for bugs and errors |
+| `/deploy` | Deployment, CI/CD, release preparation |
+| `/enhance` | Refactor, optimize, tighten security, improve UX |
+| `/explain` | Explain code, walk through logic and architecture |
+| `/orchestrate` | Coordinate multi-step plans across domains |
+| `/plan` | Implementation plans with milestones and breakdown |
+| `/preview` | Preview output, UX flows, mockups before building |
+| `/status` | Project health, dependency, and progress reports |
+| `/test` | Generate and run tests, coverage analysis |
+| `/ui-ux-pro-max` | UI/UX design, accessibility, responsive layouts |
 
-## Commands
+All skills support both English and Vietnamese trigger keywords.
 
-```bash
-npx @votruongdanh/ai-agent-skills init
-npx @votruongdanh/ai-agent-skills init --ide=kiro
-npx @votruongdanh/ai-agent-skills init --ide=cursor
-npx @votruongdanh/ai-agent-skills init --ide=antigravity
-npx @votruongdanh/ai-agent-skills init --ide=vscode
-npx @votruongdanh/ai-agent-skills init --ide=copilot
-npx @votruongdanh/ai-agent-skills init --ide=generic
-npx @votruongdanh/ai-agent-skills global
-npx @votruongdanh/ai-agent-skills list
-npx @votruongdanh/ai-agent-skills list --json
+## Agent Routing System
+
+The `/agents` skill includes 11 specialist agent personas that are automatically selected based on your request:
+
+- **Architect** — system design, scalability
+- **Backend** — APIs, databases, server logic
+- **Frontend** — UI, components, styling
+- **DevOps** — CI/CD, Docker, infrastructure
+- **QA** — testing, quality assurance
+- **Security** — vulnerability analysis, hardening
+- **Data** — databases, queries, migrations
+- **Performance** — optimization, profiling
+- **Documentation** — docs, README, guides
+- **Reviewer** — code review, best practices
+- **Fullstack** — cross-domain coordination
+
+The router handles keyword matching, Vietnamese triggers, compound keywords, and vague-request fallback.
+
+## How the Package is Structured
+
+```
+.kiro/skills/          # Canonical skill source (14 skills)
+.agents/skills/        # Cross-client interop root
+lib/skill-bundle.js    # Discovery, YAML parsing, catalog, render, install
+bin/cli.js             # Interactive CLI with colors, prompts, GitHub fetcher
+bin/install-skills.ps1 # Optional PowerShell wrapper
+scripts/render-targets.js  # Sample output renderer
+verify.js              # 44-check test suite
 ```
 
-Recommended:
-
-- Use `npx @votruongdanh/ai-agent-skills init` for normal online install.
-- Use `--ide=<name>` only when auto-detect picks the wrong target.
-- If you run the command from a nested folder, the CLI will try to install at the detected workspace root.
-- Use `npx @votruongdanh/ai-agent-skills list` to inspect bundled skills before installing them.
-- Ignore the PowerShell wrapper unless you specifically want a Windows shortcut.
-
-## How the package is structured
-
-- Canonical source prefers `.skills`, then falls back to `.kiro/skills`.
-- `bin/cli.js` can install skills or list the bundled catalog in text or JSON form.
-- `bin/cli.js` renders each skill into the correct target format for the chosen IDE.
-- `lib/skill-bundle.js` contains discovery, YAML parsing, catalog, render, and install logic.
-- `scripts/render-targets.js` renders sample outputs under `generated/`.
-
-## Catalog metadata
-
-Each discovered skill exposes:
-
-- `slug` and frontmatter `name`
-- `description`
-- `sourceRoot`
-- `hasScripts`, `hasReferences`, `hasAssets`
-- per-target compatibility metadata for native and generated installs
-
-This keeps the published package lightweight while still surfacing enough information for discovery and validation.
+- Canonical source prefers `.skills`, then falls back to `.kiro/skills`
+- `lib/skill-bundle.js` contains all discovery, parsing, rendering, and install logic
+- `bin/cli.js` provides interactive install, GitHub `add`, list, status, and help commands
+- Each skill exposes: `slug`, `name`, `description`, `sourceRoot`, `hasScripts`, `hasReferences`, `hasAssets`, and per-target compatibility metadata
 
 ## Development
 
 ```bash
-npm test
+# Run test suite (44 checks)
+node verify.js
+
+# Render sample targets
 npm run build:targets
 ```
 
-`npm test` runs installation verification against temporary bundle roots and Kiro, Cursor, Antigravity, and VS Code targets.
+See [docs/skills-benchmark.md](docs/skills-benchmark.md) for the benchmark summary behind this design.
 
-See [docs/skills-benchmark.md](docs/skills-benchmark.md) for the short benchmark summary behind this design.
+## Updating
+
+See [Update.md](Update.md) for the full release workflow:
+
+```bash
+node verify.js                # Test first
+git add . && git commit -m "description"
+npm run release:patch         # Bug fixes: x.x.0 → x.x.1
+npm run release:minor         # New features: x.0.x → x.1.0
+npm run release:major         # Breaking: 0.x.x → 1.x.x
+```
 
 ## License
 
