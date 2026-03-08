@@ -354,11 +354,13 @@ description: Asset demo
     name: 'CLI list renders text output with source roots and compatibility',
     test: () => {
       const output = runCli(['list', '--ide=cursor']);
+      // Strip ANSI escape codes for matching
+      const plain = output.replace(/\x1b\[[0-9;]*m/g, '');
       return (
-        output.includes('Available skills:') &&
-        output.includes('/plan') &&
-        output.includes('source: .kiro/skills') &&
-        output.includes('skill: native')
+        plain.includes('Available skills') &&
+        plain.includes('/plan') &&
+        plain.includes('source: .kiro/skills') &&
+        plain.includes('skill: native')
       );
     },
   },
@@ -422,7 +424,9 @@ description: Asset demo
     name: 'CLI status command runs without error',
     test: () => {
       const output = runCli(['status']);
-      return output.includes('AI Agent Skills Status') && output.includes('Skills:');
+      // Strip ANSI escape codes for matching
+      const plain = output.replace(/\x1b\[[0-9;]*m/g, '');
+      return plain.includes('AI Agent Skills') && plain.includes('Skills:');
     },
   },
   {
@@ -586,6 +590,18 @@ description: Asset demo
       const viKeywords = ['lỗi', 'tạo', 'triển khai', 'kế hoạch', 'giải thích', 'kiểm thử', 'giao diện'];
       const descs = catalog.map((s) => s.description).join(' ');
       return viKeywords.every((kw) => descs.includes(kw));
+    },
+  },
+  {
+    name: 'CLI help includes add command for GitHub skill fetching',
+    test: () => {
+      const output = runCli(['help']);
+      const plain = output.replace(/\x1b\[[0-9;]*m/g, '');
+      return (
+        plain.includes('add owner/repo') &&
+        plain.includes('GitHub') &&
+        plain.includes('Interactive setup')
+      );
     },
   },
 ];

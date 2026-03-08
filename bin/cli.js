@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const https = require('https');
+const { execSync } = require('child_process');
+const readline = require('readline');
 
 const {
   findIDEContext,
@@ -13,10 +17,84 @@ const {
   installBundle,
   listSkillNames,
   normalizeIDEName,
+  parseFrontmatter,
 } = require('../lib/skill-bundle');
 
 const PACKAGE_NAME = '@votruongdanh/ai-agent-skills';
 const CURRENT_VERSION = require('../package.json').version;
+
+// ─── ANSI Colors ────────────────────────────────────────────────────────────
+const c = {
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  red: '\x1b[31m',
+  bgBlue: '\x1b[44m',
+  bgGreen: '\x1b[42m',
+  white: '\x1b[37m',
+};
+
+function badge(text) {
+  return `${c.bgBlue}${c.white}${c.bold} ${text} ${c.reset}`;
+}
+
+function success(text) {
+  return `${c.green}✔${c.reset} ${text}`;
+}
+
+function warn(text) {
+  return `${c.yellow}⚠${c.reset} ${text}`;
+}
+
+function info(text) {
+  return `${c.cyan}ℹ${c.reset} ${text}`;
+}
+
+function error(text) {
+  return `${c.red}✖${c.reset} ${text}`;
+}
+
+function step(num, text) {
+  return `${c.dim}[${num}]${c.reset} ${text}`;
+}
+
+// ─── Interactive Prompt Helpers ─────────────────────────────────────────────
+function createRL() {
+  return readline.createInterface({ input: process.stdin, output: process.stdout });
+}
+
+function ask(rl, question) {
+  return new Promise((resolve) => rl.question(question, resolve));
+}
+
+async function selectMenu(rl, title, options) {
+  console.log(`\n${c.bold}${title}${c.reset}\n`);
+  options.forEach((opt, i) => {
+    const marker = opt.recommended ? ` ${c.green}← recommended${c.reset}` : '';
+    const desc = opt.description ? ` ${c.dim}(${opt.description})${c.reset}` : '';
+    console.log(`  ${c.cyan}${i + 1}${c.reset}) ${c.bold}${opt.label}${c.reset}${desc}${marker}`);
+  });
+  console.log('');
+
+  while (true) {
+    const answer = await ask(rl, `  ${c.dim}Your choice (1-${options.length}):${c.reset} `);
+    const num = parseInt(answer.trim(), 10);
+    if (num >= 1 && num <= options.length) {
+      return options[num - 1];
+    }
+    console.log(`  ${c.red}Please enter a number between 1 and ${options.length}${c.reset}`);
+  }
+}
+
+async function confirm(rl, question) {
+  const answer = await ask(rl, `  ${question} ${c.dim}(y/n):${c.reset} `);
+  return answer.trim().toLowerCase() === 'y' || answer.trim().toLowerCase() === 'yes';
+}
 
 function parseIDEFlag() {
   for (const arg of process.argv.slice(2)) {
@@ -24,7 +102,15 @@ function parseIDEFlag() {
       return arg.split('=')[1];
     }
   }
+  return null;
+}
 
+function parseArg(prefix) {
+  for (const arg of process.argv.slice(2)) {
+    if (arg.startsWith(`--${prefix}=`)) {
+      return arg.split('=').slice(1).join('=');
+    }
+  }
   return null;
 }
 
@@ -32,30 +118,32 @@ function hasFlag(flag) {
   return process.argv.slice(2).includes(flag);
 }
 
+function positionalArg(index) {
+  const args = process.argv.slice(2).filter((a) => !a.startsWith('-'));
+  return args[index] || null;
+}
+
+// ─── Update Check ───────────────────────────────────────────────────────────
 function checkForUpdates(callback) {
   https
     .get(`https://registry.npmjs.org/${PACKAGE_NAME}/latest`, (res) => {
       let data = '';
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+      res.on('data', (chunk) => { data += chunk; });
       res.on('end', () => {
         try {
           const latest = JSON.parse(data).version;
           if (latest !== CURRENT_VERSION) {
-            console.log(`\nUpdate available: ${CURRENT_VERSION} -> ${latest}`);
-            console.log(`Run: npx ${PACKAGE_NAME}@latest init\n`);
+            console.log(warn(`Update available: ${c.yellow}${CURRENT_VERSION}${c.reset} → ${c.green}${latest}${c.reset}`));
+            console.log(info(`Run: ${c.cyan}npx ${PACKAGE_NAME}@latest init${c.reset}\n`));
           }
-        } catch (error) {
-          // Ignore update check failures.
-        }
-
+        } catch (_) {}
         callback();
       });
     })
     .on('error', () => callback());
 }
 
+// ─── IDE Resolution ─────────────────────────────────────────────────────────
 function resolveInstallContext() {
   const cwd = process.cwd();
   const manualIDE = parseIDEFlag();
@@ -71,9 +159,8 @@ function resolveInstallContext() {
         matchedPath: projectMatch ? projectMatch.matchedPath : null,
       };
     }
-
-    console.log(`Unknown IDE flag: ${manualIDE}`);
-    console.log(`Supported values: ${getAvailableIDENames().join(', ')}\n`);
+    console.log(error(`Unknown IDE: ${manualIDE}`));
+    console.log(info(`Supported: ${getAvailableIDENames().join(', ')}\n`));
   }
 
   const detected = findIDEContext(cwd);
@@ -85,35 +172,331 @@ function resolveInstallContext() {
   };
 }
 
+// ─── Interactive Init ───────────────────────────────────────────────────────
+async function interactiveInit() {
+  const rl = createRL();
+
+  console.log(`\n${badge('AI Agent Skills')} v${CURRENT_VERSION}\n`);
+
+  // Step 1: Choose IDE
+  const ideFlag = parseIDEFlag();
+  let selectedIDE;
+
+  if (ideFlag) {
+    selectedIDE = normalizeIDEName(ideFlag);
+    if (!selectedIDE) {
+      console.log(error(`Unknown IDE: ${ideFlag}`));
+      rl.close();
+      process.exit(1);
+    }
+    const def = getIDEDefinition(selectedIDE);
+    console.log(info(`IDE: ${c.bold}${def.displayName}${c.reset} (from --ide flag)\n`));
+  } else {
+    // Auto-detect first
+    const detected = findIDEContext(process.cwd());
+    if (detected.source === 'project' && detected.ide !== 'generic') {
+      const def = getIDEDefinition(detected.ide);
+      console.log(info(`Auto-detected ${c.bold}${def.displayName}${c.reset} from ${c.dim}${detected.matchedPath}${c.reset}`));
+      const useDetected = await confirm(rl, `Use ${def.displayName}?`);
+      if (useDetected) {
+        selectedIDE = detected.ide;
+      }
+    }
+
+    if (!selectedIDE) {
+      const ideOptions = [
+        { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
+        { label: 'VS Code', value: 'vscode', description: '.github/skills' },
+        { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
+        { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
+        { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
+        { label: 'Generic', value: 'generic', description: '.kiro/skills (fallback)' },
+      ];
+      const choice = await selectMenu(rl, '🔧 Choose your IDE:', ideOptions);
+      selectedIDE = choice.value;
+    }
+  }
+
+  // Step 2: Choose scope (project vs global)
+  let scope = hasFlag('--global') ? 'global' : null;
+
+  if (!scope) {
+    const scopeOptions = [
+      { label: 'This project only', value: 'project', description: process.cwd(), recommended: true },
+      { label: 'Global (all projects)', value: 'global', description: `~/${getIDEDefinition(selectedIDE).projectRoot}` },
+    ];
+    const scopeChoice = await selectMenu(rl, '📂 Install scope:', scopeOptions);
+    scope = scopeChoice.value;
+  }
+
+  rl.close();
+
+  // Step 3: Install
+  const ideDefinition = getIDEDefinition(selectedIDE);
+  const cwd = process.cwd();
+  const projectMatch = findProjectRootForIDE(cwd, selectedIDE);
+  const baseDir = scope === 'global' ? cwd : (projectMatch ? projectMatch.projectDir : cwd);
+  const rootDir = scope === 'global' ? ideDefinition.globalRoot : path.join(baseDir, ideDefinition.projectRoot);
+  const installedVersion = getInstalledVersion(rootDir);
+
+  console.log(`\n${step(1, 'Installing skills...')}`);
+
+  const result = installBundle({
+    baseDir,
+    ide: selectedIDE,
+    scope,
+    version: CURRENT_VERSION,
+    includeCompatibilityAliases: true,
+  });
+
+  console.log(success(`${result.skillCount} skills installed for ${c.bold}${result.displayName}${c.reset}`));
+
+  if (installedVersion) {
+    console.log(info(`Updated: ${c.yellow}${installedVersion}${c.reset} → ${c.green}${CURRENT_VERSION}${c.reset}`));
+  }
+
+  console.log(`\n${step(2, 'Targets created:')}`);
+  for (const target of result.targets) {
+    const rel = path.relative(cwd, target.targetDir) || '.';
+    const tag = target.compatibility ? ` ${c.dim}(compat)${c.reset}` : '';
+    console.log(`  ${c.green}→${c.reset} ${rel}${tag}`);
+  }
+
+  // Warnings
+  const uniqueWarnings = dedupeWarnings(result.warnings);
+  if (uniqueWarnings.length) {
+    console.log('');
+    for (const w of uniqueWarnings) {
+      console.log(warn(w.message));
+    }
+  }
+
+  // Next steps
+  console.log(`\n${c.bold}${c.green}Done!${c.reset} Next steps:\n`);
+  console.log(`  1. ${c.dim}Reopen${c.reset} ${c.bold}${result.displayName}${c.reset}`);
+  console.log(`  2. ${c.dim}Open agent chat and type${c.reset} ${c.cyan}/${c.reset} ${c.dim}to list skills${c.reset}`);
+  console.log(`  3. ${c.dim}Try:${c.reset} ${c.cyan}/create${c.reset}, ${c.cyan}/debug${c.reset}, ${c.cyan}/explain${c.reset}, or ${c.cyan}/plan${c.reset}`);
+  console.log('');
+}
+
+// ─── GitHub Skill Fetcher ───────────────────────────────────────────────────
+function httpsGet(url) {
+  return new Promise((resolve, reject) => {
+    const options = { headers: { 'User-Agent': 'ai-agent-skills-cli' } };
+    https.get(url, options, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return httpsGet(res.headers.location).then(resolve, reject);
+      }
+      if (res.statusCode !== 200) {
+        return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+      }
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => resolve(data));
+    }).on('error', reject);
+  });
+}
+
+async function fetchGitHubTree(owner, repo, branch) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`;
+  const data = JSON.parse(await httpsGet(url));
+  return data.tree || [];
+}
+
+async function fetchGitHubFile(owner, repo, branch, filePath) {
+  const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+  return httpsGet(url);
+}
+
+async function addSkillFromGitHub() {
+  const source = positionalArg(1); // e.g. "owner/repo" or "owner/repo/skills/my-skill"
+
+  if (!source) {
+    console.log(error('Usage: ai-skills add <owner/repo> [--skill=name] [--ide=cursor]'));
+    console.log(info('Example: ai-skills add anthropics/skills --skill=pdf-processing'));
+    console.log(info('Example: ai-skills add anthropics/skills  (lists all skills)'));
+    process.exit(1);
+  }
+
+  const parts = source.split('/');
+  if (parts.length < 2) {
+    console.log(error('Format: owner/repo (e.g. anthropics/skills)'));
+    process.exit(1);
+  }
+
+  const owner = parts[0];
+  const repo = parts[1];
+  const branch = parseArg('branch') || 'main';
+  const skillFilter = parseArg('skill');
+
+  console.log(`\n${badge('AI Agent Skills')} ${c.dim}— Add from GitHub${c.reset}\n`);
+  console.log(info(`Fetching from ${c.cyan}${owner}/${repo}${c.reset} (${branch})...`));
+
+  try {
+    const tree = await fetchGitHubTree(owner, repo, branch);
+
+    // Find all SKILL.md files
+    const skillFiles = tree
+      .filter((item) => item.path.endsWith('/SKILL.md') && item.type === 'blob')
+      .map((item) => {
+        const dir = path.dirname(item.path);
+        const name = path.basename(dir);
+        return { name, dir, skillMdPath: item.path };
+      });
+
+    if (!skillFiles.length) {
+      console.log(error('No SKILL.md files found in this repository.'));
+      process.exit(1);
+    }
+
+    console.log(success(`Found ${c.bold}${skillFiles.length}${c.reset} skills in repo\n`));
+
+    // If --skill specified, filter
+    let selectedSkills = skillFiles;
+    if (skillFilter) {
+      selectedSkills = skillFiles.filter((s) => s.name === skillFilter);
+      if (!selectedSkills.length) {
+        console.log(error(`Skill "${skillFilter}" not found. Available:`));
+        skillFiles.forEach((s) => console.log(`  ${c.cyan}→${c.reset} ${s.name} ${c.dim}(${s.dir})${c.reset}`));
+        process.exit(1);
+      }
+    } else {
+      // Interactive selection
+      const rl = createRL();
+
+      console.log(`${c.bold}Available skills:${c.reset}\n`);
+      skillFiles.forEach((s, i) => {
+        console.log(`  ${c.cyan}${i + 1}${c.reset}) ${c.bold}${s.name}${c.reset} ${c.dim}(${s.dir})${c.reset}`);
+      });
+      console.log(`  ${c.cyan}${skillFiles.length + 1}${c.reset}) ${c.bold}All skills${c.reset} ${c.dim}(install everything)${c.reset}`);
+      console.log('');
+
+      const answer = await ask(rl, `  ${c.dim}Choose (1-${skillFiles.length + 1}):${c.reset} `);
+      const num = parseInt(answer.trim(), 10);
+
+      if (num === skillFiles.length + 1) {
+        // Install all
+      } else if (num >= 1 && num <= skillFiles.length) {
+        selectedSkills = [skillFiles[num - 1]];
+      } else {
+        console.log(error('Invalid choice'));
+        rl.close();
+        process.exit(1);
+      }
+
+      // Choose target IDE
+      const ideFlag = parseIDEFlag();
+      let targetIDE;
+
+      if (ideFlag) {
+        targetIDE = normalizeIDEName(ideFlag);
+      } else {
+        const ideOptions = [
+          { label: 'Cursor', value: 'cursor', description: '.cursor/skills', recommended: true },
+          { label: 'VS Code', value: 'vscode', description: '.github/skills' },
+          { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
+          { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
+          { label: '.agents/skills (cross-client)', value: 'agents', description: '.agents/skills' },
+        ];
+        const ideChoice = await selectMenu(rl, '🔧 Install to:', ideOptions);
+        targetIDE = ideChoice.value;
+      }
+
+      // Choose scope
+      let scope = 'project';
+      if (!hasFlag('--global')) {
+        const scopeOptions = [
+          { label: 'This project', value: 'project', recommended: true },
+          { label: 'Global (~/.agents/skills)', value: 'global' },
+        ];
+        const scopeChoice = await selectMenu(rl, '📂 Scope:', scopeOptions);
+        scope = scopeChoice.value;
+      }
+
+      rl.close();
+
+      // Download and install
+      console.log(`\n${step(1, 'Downloading skills...')}`);
+
+      const targetBase = scope === 'global' ? os.homedir() : process.cwd();
+      let targetDir;
+      if (targetIDE === 'agents') {
+        targetDir = path.join(targetBase, '.agents', 'skills');
+      } else {
+        const ideDef = getIDEDefinition(targetIDE);
+        if (ideDef) {
+          const target = ideDef.targets.find((t) => t.format === 'skill') || ideDef.targets[0];
+          targetDir = scope === 'global'
+            ? path.join(ideDef.globalRoot, target.relativeDir)
+            : path.join(targetBase, ideDef.projectRoot, target.relativeDir);
+        } else {
+          targetDir = path.join(targetBase, '.agents', 'skills');
+        }
+      }
+
+      let installed = 0;
+      for (const skill of selectedSkills) {
+        process.stdout.write(`  ${c.cyan}↓${c.reset} ${skill.name}...`);
+
+        // Fetch SKILL.md
+        const content = await fetchGitHubFile(owner, repo, branch, skill.skillMdPath);
+        const skillDir = path.join(targetDir, skill.name);
+        fs.mkdirSync(skillDir, { recursive: true });
+        fs.writeFileSync(path.join(skillDir, 'SKILL.md'), content, 'utf8');
+
+        // Fetch companion dirs (scripts/, references/, assets/)
+        const companionDirs = ['scripts', 'references', 'assets'];
+        for (const companion of companionDirs) {
+          const prefix = `${skill.dir}/${companion}/`;
+          const companionFiles = tree.filter((item) => item.path.startsWith(prefix) && item.type === 'blob');
+          for (const file of companionFiles) {
+            const relativePath = file.path.slice(skill.dir.length + 1);
+            const destPath = path.join(skillDir, relativePath);
+            fs.mkdirSync(path.dirname(destPath), { recursive: true });
+            const fileContent = await fetchGitHubFile(owner, repo, branch, file.path);
+            fs.writeFileSync(destPath, fileContent, 'utf8');
+          }
+        }
+
+        installed++;
+        console.log(` ${c.green}✔${c.reset}`);
+      }
+
+      console.log(`\n${success(`Installed ${c.bold}${installed}${c.reset} skill(s) to ${c.cyan}${path.relative(process.cwd(), targetDir) || targetDir}${c.reset}`)}`);
+      console.log(`\n${c.bold}${c.green}Done!${c.reset} Skills are ready to use.\n`);
+      return;
+    }
+  } catch (err) {
+    console.log(error(`Failed: ${err.message}`));
+    process.exit(1);
+  }
+}
+
 function printResolution(context) {
   const ideDefinition = getIDEDefinition(context.ide);
 
   if (context.source === 'flag') {
-    console.log(`Using IDE flag: ${ideDefinition.displayName}`);
+    console.log(info(`Using IDE: ${c.bold}${ideDefinition.displayName}${c.reset} (from --ide flag)`));
     if (context.matchedPath) {
-      console.log(`Workspace root: ${context.baseDir} (found ${context.matchedPath})\n`);
+      console.log(info(`Workspace: ${c.dim}${context.baseDir}${c.reset} (found ${context.matchedPath})\n`));
     } else {
-      console.log(`Workspace root: ${context.baseDir}\n`);
+      console.log(info(`Workspace: ${c.dim}${context.baseDir}${c.reset}\n`));
     }
     return;
   }
 
   if (context.source === 'project') {
-    console.log(
-      `Auto-detected ${ideDefinition.displayName} from ${context.matchedPath} at ${context.baseDir}\n`
-    );
+    console.log(info(`Auto-detected ${c.bold}${ideDefinition.displayName}${c.reset} from ${c.dim}${context.matchedPath}${c.reset}\n`));
     return;
   }
 
   if (context.source === 'global') {
-    console.log(
-      `Auto-detected ${ideDefinition.displayName} from global config ${context.matchedPath}\n`
-    );
+    console.log(info(`Auto-detected ${c.bold}${ideDefinition.displayName}${c.reset} from global config ${c.dim}${context.matchedPath}${c.reset}\n`));
     return;
   }
 
-  console.log('No IDE marker found. Falling back to generic SKILL.md layout.');
-  console.log('Tip: use --ide=cursor, --ide=antigravity, --ide=vscode, or --ide=kiro\n');
+  console.log(warn('No IDE marker found. Falling back to generic SKILL.md layout.'));
+  console.log(info(`Tip: use ${c.cyan}--ide=cursor${c.reset}, ${c.cyan}--ide=antigravity${c.reset}, ${c.cyan}--ide=vscode${c.reset}, or ${c.cyan}--ide=kiro${c.reset}\n`));
 }
 
 function dedupeWarnings(warnings) {
@@ -139,37 +522,40 @@ function printWarnings(warnings) {
     return;
   }
 
-  console.log('Warnings:');
   for (const warning of uniqueWarnings) {
-    console.log(`  - ${warning.message}`);
+    console.log(warn(warning.message));
   }
   console.log('');
 }
 
 function printInstallResult(result, previousVersion, scope) {
   const action = previousVersion ? 'Updated' : 'Installed';
-  const targetLabel = scope === 'global' ? 'Global targets' : 'Targets';
 
-  console.log(`${action} ${result.skillCount} skills for ${result.displayName}.`);
+  console.log(success(`${action} ${c.bold}${result.skillCount}${c.reset} skills for ${c.bold}${result.displayName}${c.reset}`));
   if (previousVersion) {
-    console.log(`Version: ${previousVersion} -> ${CURRENT_VERSION}`);
+    console.log(info(`Version: ${c.yellow}${previousVersion}${c.reset} → ${c.green}${CURRENT_VERSION}${c.reset}`));
   }
-  console.log(`${targetLabel}:`);
+
+  console.log(`\n${c.bold}Targets:${c.reset}`);
   for (const target of result.targets) {
     const relativePath = path.relative(process.cwd(), target.targetDir) || '.';
-    const tag = target.compatibility ? ' (compat)' : '';
-    console.log(`  - ${relativePath}${tag}`);
+    const tag = target.compatibility ? ` ${c.dim}(compat)${c.reset}` : '';
+    console.log(`  ${c.green}→${c.reset} ${relativePath}${tag}`);
   }
   console.log('');
   printWarnings(result.warnings);
-  console.log('Next steps:');
-  console.log(`  1. Reopen ${result.displayName}.`);
-  console.log('  2. Open agent chat and type "/" to list skills or slash commands.');
-  console.log('  3. Run a skill such as /create, /debug, or /plan.\n');
+
+  console.log(`${c.bold}${c.green}Done!${c.reset} Next steps:\n`);
+  console.log(`  1. ${c.dim}Reopen${c.reset} ${c.bold}${result.displayName}${c.reset}`);
+  console.log(`  2. ${c.dim}Open agent chat and type${c.reset} ${c.cyan}/${c.reset} ${c.dim}to list skills${c.reset}`);
+  console.log(`  3. ${c.dim}Try:${c.reset} ${c.cyan}/create${c.reset}, ${c.cyan}/debug${c.reset}, ${c.cyan}/explain${c.reset}, or ${c.cyan}/plan${c.reset}`);
+  console.log('');
 }
 
 function install(scope) {
   try {
+    console.log(`\n${badge('AI Agent Skills')} v${CURRENT_VERSION}\n`);
+
     const context = resolveInstallContext();
     const ideDefinition = getIDEDefinition(context.ide);
     const baseDir = scope === 'global' ? process.cwd() : context.baseDir;
@@ -181,9 +567,7 @@ function install(scope) {
 
     printResolution(context);
 
-    console.log(
-      `${installedVersion ? 'Updating' : 'Installing'} AI Agent Skills for ${ideDefinition.displayName}...\n`
-    );
+    console.log(step(1, `${installedVersion ? 'Updating' : 'Installing'} skills for ${c.bold}${ideDefinition.displayName}${c.reset}...\n`));
 
     const result = installBundle({
       baseDir,
@@ -194,8 +578,8 @@ function install(scope) {
     });
 
     printInstallResult(result, installedVersion, scope);
-  } catch (error) {
-    console.error(`Error installing skills: ${error.message}`);
+  } catch (err) {
+    console.log(error(`Install failed: ${err.message}`));
     process.exit(1);
   }
 }
@@ -217,15 +601,6 @@ function formatCompatibilitySummary(skill, ide) {
       return `${target.format}: ${status}`;
     })
     .join(', ');
-}
-
-function printListContext(context) {
-  const ideDefinition = getIDEDefinition(context.ide);
-  console.log(`Listing bundled skills for ${ideDefinition.displayName}.`);
-  if (context.matchedPath) {
-    console.log(`Detected from: ${context.matchedPath}`);
-  }
-  console.log('');
 }
 
 function listSkills() {
@@ -261,20 +636,24 @@ function listSkills() {
       return;
     }
 
-    printListContext(context);
-    console.log('Available skills:');
+    const ideDefinition = getIDEDefinition(context.ide);
+    console.log(`\n${badge('AI Agent Skills')} ${c.dim}— Skill Catalog${c.reset}\n`);
+    console.log(info(`IDE: ${c.bold}${ideDefinition.displayName}${c.reset}`));
+    if (context.matchedPath) {
+      console.log(info(`Detected from: ${c.dim}${context.matchedPath}${c.reset}`));
+    }
+    console.log('');
+
+    console.log(`${c.bold}Available skills (${catalogResult.skills.length}):${c.reset}\n`);
     for (const skill of catalogResult.skills) {
-      console.log(
-        `  - /${skill.slug} - ${skill.description} [source: ${skill.sourceRoot}] [${formatCompatibilitySummary(
-          skill,
-          context.ide
-        )}]`
-      );
+      const compat = formatCompatibilitySummary(skill, context.ide);
+      console.log(`  ${c.cyan}/${skill.slug}${c.reset} ${c.dim}—${c.reset} ${skill.description}`);
+      console.log(`    ${c.dim}source: ${skill.sourceRoot} | ${compat}${c.reset}`);
     }
     console.log('');
     printWarnings(catalogResult.diagnostics);
-  } catch (error) {
-    console.error(`Error listing skills: ${error.message}`);
+  } catch (err) {
+    console.log(error(`List failed: ${err.message}`));
     process.exit(1);
   }
 }
@@ -287,21 +666,28 @@ function statusReport() {
     const installedVersion = getInstalledVersion(rootDir);
     const catalogResult = getSkillCatalog({ includeDiagnostics: true });
 
-    console.log('=== AI Agent Skills Status ===\n');
-    console.log(`Package: ${PACKAGE_NAME}`);
-    console.log(`Bundle version: ${CURRENT_VERSION}`);
-    console.log(`Installed version: ${installedVersion || 'not installed'}`);
-    console.log(`IDE: ${ideDefinition.displayName}`);
-    console.log(`Workspace: ${context.baseDir}`);
-    console.log(`Skills: ${catalogResult.skills.length}`);
+    console.log(`\n${badge('AI Agent Skills')} ${c.dim}— Status${c.reset}\n`);
+
+    const rows = [
+      ['Package', PACKAGE_NAME],
+      ['Bundle version', CURRENT_VERSION],
+      ['Installed version', installedVersion || `${c.yellow}not installed${c.reset}`],
+      ['IDE', ideDefinition.displayName],
+      ['Workspace', context.baseDir],
+      ['Skills', `${catalogResult.skills.length}`],
+    ];
 
     const agentSkill = catalogResult.skills.find((s) => s.slug === 'agents');
     if (agentSkill && agentSkill.agents) {
-      console.log(`Agent routing: enabled`);
+      rows.push(['Agent routing', `${c.green}enabled${c.reset}`]);
     }
 
     const needsUpdate = installedVersion && installedVersion !== CURRENT_VERSION;
-    console.log(`Update needed: ${needsUpdate ? 'yes' : 'no'}`);
+    rows.push(['Update needed', needsUpdate ? `${c.yellow}yes${c.reset}` : `${c.green}no${c.reset}`]);
+
+    for (const [label, value] of rows) {
+      console.log(`  ${c.dim}${label}:${c.reset} ${value}`);
+    }
 
     if (catalogResult.diagnostics.length) {
       console.log('');
@@ -309,74 +695,75 @@ function statusReport() {
     }
 
     console.log('');
-  } catch (error) {
-    console.error(`Error getting status: ${error.message}`);
+  } catch (err) {
+    console.log(error(`Status failed: ${err.message}`));
     process.exit(1);
   }
 }
 
 function showHelp() {
-  const skillNames = listSkillNames().map((name) => `/${name}`).join(', ');
+  const skillNames = listSkillNames().map((name) => `${c.cyan}/${name}${c.reset}`).join(', ');
 
   console.log(`
-AI Agent Skills CLI
+${badge('AI Agent Skills')} v${CURRENT_VERSION}
 
-Usage:
-  npx ${PACKAGE_NAME} init
-  npx ${PACKAGE_NAME} init --ide=<name>
-  npx ${PACKAGE_NAME} global
-  npx ${PACKAGE_NAME} list
-  npx ${PACKAGE_NAME} list --json
-  npx ${PACKAGE_NAME} status
-  npx ${PACKAGE_NAME} help
+${c.bold}Usage:${c.reset}
 
-Supported IDE values:
-  antigravity  -> .agent/workflows (+ agent/workflows compatibility alias)
-  kiro         -> .kiro/skills
-  cursor       -> .cursor/skills (+ legacy .cursor/rules)
-  vscode       -> .github/skills for VS Code agent mode
-  copilot      -> .github/skills for GitHub Copilot agent mode
-  generic      -> .kiro/skills fallback
+  ${c.green}npx ${PACKAGE_NAME} init${c.reset}              ${c.dim}Interactive setup (choose IDE + scope)${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} init --ide=cursor${c.reset}  ${c.dim}Non-interactive install for specific IDE${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} global${c.reset}            ${c.dim}Install globally for all projects${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} add owner/repo${c.reset}    ${c.dim}Add skills from a GitHub repository${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} list${c.reset}              ${c.dim}List all bundled skills${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} list --json${c.reset}       ${c.dim}JSON output for scripts${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} status${c.reset}            ${c.dim}Show install status & versions${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} help${c.reset}              ${c.dim}Show this help${c.reset}
 
-Canonical skill roots:
-  .skills      -> preferred portable source
-  .kiro/skills -> legacy fallback source
+${c.bold}GitHub Add Examples:${c.reset}
 
-Generated target limitations:
-  Cursor .mdc rules and Antigravity workflows only render SKILL.md content.
-  Companion scripts/, references/, and assets/ stay native-only.
+  ${c.green}npx ${PACKAGE_NAME} add anthropics/skills${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} add anthropics/skills --skill=pdf-processing${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} add anthropics/skills --ide=cursor --branch=main${c.reset}
 
-Primary install path:
-  npx ${PACKAGE_NAME} init
+${c.bold}Supported IDEs:${c.reset}
 
-Force a specific IDE:
-  npx ${PACKAGE_NAME} init --ide=cursor
-  npx ${PACKAGE_NAME} init --ide=antigravity
-  npx ${PACKAGE_NAME} init --ide=vscode
-  npx ${PACKAGE_NAME} init --ide=kiro
+  ${c.cyan}cursor${c.reset}       ${c.dim}→ .cursor/skills + .cursor/rules${c.reset}
+  ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills for VS Code agent mode${c.reset}
+  ${c.cyan}copilot${c.reset}      ${c.dim}→ .github/skills for GitHub Copilot agent mode${c.reset}
+  ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
+  ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
+  ${c.cyan}generic${c.reset}      ${c.dim}→ .kiro/skills fallback${c.reset}
 
-Inspect the bundled catalog:
-  npx ${PACKAGE_NAME} list
-  npx ${PACKAGE_NAME} list --json
-
-PowerShell wrapper (optional):
-  powershell -ExecutionPolicy Bypass -File .\\bin\\install-skills.ps1 -Ide vscode
-
-Available skills:
+${c.bold}Available skills:${c.reset}
   ${skillNames}
 
-Documentation: https://github.com/votruongdanh/ai-agent-skills
+${c.dim}Documentation: https://github.com/votruongdanh/ai-agent-skills${c.reset}
 `);
 }
 
+// ─── Main ───────────────────────────────────────────────────────────────────
 const command = process.argv[2];
 
 switch (command) {
   case 'init':
-    checkForUpdates(() => install('project'));
+    if (parseIDEFlag() || hasFlag('--no-interactive')) {
+      // Non-interactive: --ide flag or explicit opt-out
+      checkForUpdates(() => install('project'));
+    } else {
+      // Interactive mode by default
+      checkForUpdates(() => interactiveInit().catch((err) => {
+        console.log(error(err.message));
+        process.exit(1);
+      }));
+    }
     break;
   case 'global':
     checkForUpdates(() => install('global'));
+    break;
+  case 'add':
+    checkForUpdates(() => addSkillFromGitHub().catch((err) => {
+      console.log(error(err.message));
+      process.exit(1);
+    }));
     break;
   case 'list':
     listSkills();
@@ -385,7 +772,14 @@ switch (command) {
     statusReport();
     break;
   case 'update':
-    checkForUpdates(() => install('project'));
+    if (parseIDEFlag() || hasFlag('--no-interactive')) {
+      checkForUpdates(() => install('project'));
+    } else {
+      checkForUpdates(() => interactiveInit().catch((err) => {
+        console.log(error(err.message));
+        process.exit(1);
+      }));
+    }
     break;
   case 'help':
   case '--help':
@@ -393,7 +787,16 @@ switch (command) {
     showHelp();
     break;
   default:
-    console.log('Unknown command. Use "init", "global", "list", "status", "update", or "help".\n');
-    showHelp();
-    process.exit(1);
+    if (!command) {
+      // No command = show interactive init
+      checkForUpdates(() => interactiveInit().catch((err) => {
+        console.log(error(err.message));
+        process.exit(1);
+      }));
+    } else {
+      console.log(error(`Unknown command: ${command}`));
+      console.log(info(`Run ${c.cyan}npx ${PACKAGE_NAME} help${c.reset} for usage.\n`));
+      showHelp();
+      process.exit(1);
+    }
 }
