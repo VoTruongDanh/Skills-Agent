@@ -208,6 +208,8 @@ async function interactiveInit() {
         { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
         { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
         { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
+        { label: 'VS Code', value: 'vscode', description: '.github/skills' },
+        { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
       ];
       const choice = await selectMenu(rl, '🔧 Choose your IDE:', ideOptions);
       selectedIDE = choice.value;
@@ -392,6 +394,8 @@ async function addSkillFromGitHub() {
           { label: 'Cursor', value: 'cursor', description: '.cursor/skills', recommended: true },
           { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
           { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
+          { label: 'VS Code', value: 'vscode', description: '.github/skills' },
+          { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
         ];
         const ideChoice = await selectMenu(rl, '🔧 Install to:', ideOptions);
         targetIDE = ideChoice.value;
@@ -491,7 +495,7 @@ function printResolution(context) {
   }
 
   console.log(warn('No IDE marker found. Falling back to generic SKILL.md layout.'));
-  console.log(info(`Tip: use ${c.cyan}--ide=cursor${c.reset}, ${c.cyan}--ide=kiro${c.reset}, or ${c.cyan}--ide=antigravity${c.reset}\n`));
+  console.log(info(`Tip: use ${c.cyan}--ide=cursor${c.reset}, ${c.cyan}--ide=kiro${c.reset}, ${c.cyan}--ide=antigravity${c.reset}, ${c.cyan}--ide=vscode${c.reset}, or ${c.cyan}--ide=copilot${c.reset}\n`));
 }
 
 function dedupeWarnings(warnings) {
@@ -706,6 +710,7 @@ ${c.bold}Usage:${c.reset}
 
   ${c.green}npx ${PACKAGE_NAME} init${c.reset}              ${c.dim}Interactive setup (choose IDE + scope)${c.reset}
   ${c.green}npx ${PACKAGE_NAME} init --ide=cursor${c.reset}  ${c.dim}Non-interactive install for specific IDE${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} init --ide=vscode${c.reset}  ${c.dim}Install skills to VS Code/Copilot layout${c.reset}
   ${c.green}npx ${PACKAGE_NAME} global${c.reset}            ${c.dim}Install globally for all projects${c.reset}
   ${c.green}npx ${PACKAGE_NAME} add owner/repo${c.reset}    ${c.dim}Add skills from a GitHub repository${c.reset}
   ${c.green}npx ${PACKAGE_NAME} list${c.reset}              ${c.dim}List all bundled skills${c.reset}
@@ -724,6 +729,8 @@ ${c.bold}Supported IDEs:${c.reset}
   ${c.cyan}cursor${c.reset}       ${c.dim}→ .cursor/skills + .cursor/rules${c.reset}
   ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
   ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
+  ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills${c.reset}
+  ${c.cyan}copilot${c.reset}      ${c.dim}→ .github/skills${c.reset}
 
 ${c.bold}Available skills:${c.reset}
   ${skillNames}

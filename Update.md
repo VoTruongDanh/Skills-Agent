@@ -51,6 +51,8 @@ For non-interactive mode (CI/CD), use flags:
 npx @votruongdanh/ai-agent-skills@latest init --ide=cursor
 npx @votruongdanh/ai-agent-skills@latest init --ide=kiro
 npx @votruongdanh/ai-agent-skills@latest init --ide=antigravity
+npx @votruongdanh/ai-agent-skills@latest init --ide=vscode
+npx @votruongdanh/ai-agent-skills@latest init --ide=copilot
 ```
 
 Users can also add skills from GitHub repositories:
