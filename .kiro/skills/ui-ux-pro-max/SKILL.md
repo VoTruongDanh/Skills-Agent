@@ -7,7 +7,7 @@ related-skills: [create, preview, enhance]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check design system, brand guidelines, component library, past UI decisions, accessibility notes, and responsive design patterns.
-**END**: Update `.ai-memory.md` with: UI/UX changes recommended/applied, design patterns used, accessibility improvements, and brand consistency notes.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: UI/UX changes, patterns used, a11y improvements, and brand consistency notes.
 
 ## Goal
 Upgrade the product experience with clear, practical UI/UX improvements.
@@ -56,6 +56,7 @@ If any answer is unclear, ASK before proceeding.
 - Optimize for clarity before decoration.
 - Respect existing brand and component patterns when present.
 - Include empty, loading, error, and success states when relevant.
+- Avoid widespread redesigns unless asked; prioritize small, safe diffs and ASK before large UI rewrites.
 - Always read and update the memory file.
 
 ## Related Skills

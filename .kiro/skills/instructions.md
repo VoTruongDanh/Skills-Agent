@@ -28,6 +28,7 @@ This project uses an **AI Skills system** with 13 skills, 11 specialist agents, 
    | `/orchestrate` | `.kiro/skills/orchestrate/SKILL.md` | Coordinate multi-step workflows |
    | `/ui-ux-pro-max` | `.kiro/skills/ui-ux-pro-max/SKILL.md` | Advanced UI/UX improvements |
    | `/explain` | `.kiro/skills/explain/SKILL.md` | Explain code, walk through logic, understand architecture |
+   | `/integrate` | `.kiro/skills/integrate/SKILL.md` | Integrate provided sample code with minimal impact |
 
 3. **If the request is vague/general** (no clear skill match):
    - "Help me with this project" → Read `.kiro/skills/status/SKILL.md` first, then suggest next steps
@@ -59,7 +60,8 @@ This project uses an **AI Skills system** with 13 skills, 11 specialist agents, 
 
 6. **Run quality checks**: Read `.kiro/skills/_scripts/checklist.md` for cross-cutting checks.
 
-7. **Update memory**: Save findings to `.ai-memory.md`.
+7. **Update memory**: Save findings to `.ai-memory.md` using the **Memory Compaction Rules** in `.ai-memory.md` (short bullets, dedupe, enforce section limits).
+   - If you notice duplicates, apply `.kiro/skills/_scripts/memory-dedupe.md` and merge bullets instead of appending.
 
 ### .ai-memory.md Template (create if not exists)
 

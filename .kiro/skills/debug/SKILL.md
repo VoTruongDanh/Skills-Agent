@@ -7,7 +7,7 @@ related-skills: [test, enhance, status]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check for known bugs, past fixes, tech stack details, common error patterns, and architecture notes.
-**END**: Update `.ai-memory.md` with: bug description, root cause found, fix applied, affected files, lessons learned, and any remaining risks.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: bug, root cause, fix, files touched, lessons learned, and remaining risks.
 
 ## Goal
 Find the real root cause, not just the first visible symptom.
@@ -62,6 +62,7 @@ If any answer is missing, ASK before proceeding.
 - Do not guess when evidence is missing; say what must be checked.
 - Prefer deterministic reproduction steps.
 - Mention any hidden risk or side effect of the fix.
+- Avoid changing unrelated files; if a fix seems wide-impact, ASK before proceeding.
 - Always read and update the memory file.
 
 ## Related Skills

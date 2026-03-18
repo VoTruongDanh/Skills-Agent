@@ -7,7 +7,7 @@ related-skills: [debug, create, enhance]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check test framework in use, existing test coverage, known failing tests, testing patterns, and CI/CD test configuration.
-**END**: Update `.ai-memory.md` with: tests added/modified, coverage changes, testing patterns established, and any discovered gaps.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: tests changed, coverage deltas (if known), patterns established, and gaps.
 
 ## Goal
 Improve confidence in the system through targeted testing.
@@ -49,6 +49,7 @@ If any answer is unclear, ASK before proceeding.
 - Prefer stable tests over brittle tests.
 - Cover both happy path and key edge cases.
 - If no test framework exists, propose the lightest practical option.
+- Avoid changing unrelated production code; if tests require refactors, ASK before widening scope.
 - Always read and update the memory file.
 
 ## Related Skills

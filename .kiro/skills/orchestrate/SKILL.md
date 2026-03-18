@@ -7,7 +7,7 @@ related-skills: [plan, create, deploy, test]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check project architecture, team structure, past orchestration plans, ongoing tasks, and blockers.
-**END**: Update `.ai-memory.md` with: workstreams defined, agent assignments, dependencies identified, execution order, and any blockers or risks discovered.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: workstreams, assignments, dependencies, execution order, and blockers/risks.
 
 ## Goal
 Break a complex request into a coordinated execution plan with clear agent assignments.
@@ -63,6 +63,7 @@ If any answer is unclear, ASK before proceeding.
 - Keep plans realistic for the current project.
 - Surface unknowns early.
 - Favor visible checkpoints over long hidden work.
+- Control scope: each workstream must state minimal files to touch; ASK before allowing wide-impact changes.
 - Always read and update the memory file.
 
 ## Related Skills

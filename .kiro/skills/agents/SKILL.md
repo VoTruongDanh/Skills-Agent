@@ -11,7 +11,7 @@ This is the master agent routing skill. It analyzes every user request and silen
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root — check which agents were used previously and what domain knowledge has been accumulated.
-**END**: Update `.ai-memory.md` with which agent was applied and why.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with which agent was applied and why.
 
 ## Agent Selection Matrix
 

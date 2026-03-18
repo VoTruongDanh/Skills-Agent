@@ -7,7 +7,7 @@ related-skills: [debug, test, plan]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check past enhancements, known pain points, tech debt notes, performance baselines, and architecture decisions.
-**END**: Update `.ai-memory.md` with: what was enhanced, improvements made, performance gains, tradeoffs accepted, and any remaining tech debt.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what changed, impact, tradeoffs, and remaining tech debt.
 
 ## Goal
 Improve an existing implementation without breaking working behavior.
@@ -49,6 +49,7 @@ If any answer is unclear, ASK before proceeding.
 - Preserve behavior unless the user asked for a behavior change.
 - Prefer small, meaningful upgrades over broad rewrites.
 - If performance is discussed, explain where the gain comes from.
+- Avoid changing unrelated files; if improvement requires broad refactor, ASK before doing it.
 - Always read and update the memory file.
 
 ## Related Skills

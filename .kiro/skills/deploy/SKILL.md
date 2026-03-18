@@ -7,7 +7,7 @@ related-skills: [test, status, plan]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check deployment history, target environments, known infrastructure, CI/CD setup, past deployment issues.
-**END**: Update `.ai-memory.md` with: deployment target, steps executed, environment details, issues encountered, rollback notes, and infrastructure decisions.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: target, steps, env details, issues, rollback notes, and infra decisions.
 
 ## Goal
 Prepare a safe, repeatable deployment or release plan.
@@ -57,6 +57,7 @@ If any answer is unclear, ASK before proceeding.
 - Prefer least-risk rollout patterns.
 - Never expose secrets.
 - Distinguish clearly between required and optional steps.
+- Avoid unrelated infra/app changes; if a deployment step requires broad refactors, ASK first.
 - Always read and update the memory file.
 
 ## Related Skills

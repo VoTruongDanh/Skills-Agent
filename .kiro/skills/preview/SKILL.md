@@ -7,7 +7,7 @@ related-skills: [create, ui-ux-pro-max, plan]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check UI patterns, design decisions, existing previews, brand guidelines, and user flow notes.
-**END**: Update `.ai-memory.md` with: what was previewed, assumptions made, feedback received, and design decisions confirmed.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what was previewed, assumptions, feedback, and confirmed decisions.
 
 ## Goal
 Show the user what the result will look or feel like before full implementation.
@@ -43,6 +43,7 @@ If any answer is unclear, ASK before proceeding.
 ## Rules
 - Keep previews realistic and consistent with the current project.
 - Label illustrative content clearly when it is mock data.
+- Avoid implying broad code changes; if the preview would require major refactor, CALL IT OUT and ASK before implementation.
 - Always read and update the memory file.
 
 ## Quality Gate

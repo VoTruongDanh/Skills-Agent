@@ -7,7 +7,7 @@ related-skills: [plan, debug, deploy]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. This is the PRIMARY source for status — check all recorded history, decisions, tasks, bugs, and milestones.
-**END**: Update `.ai-memory.md` with: current status snapshot, what is working, what is incomplete, risks found, and recommended priorities.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: status snapshot, what's working, gaps, risks, and priorities.
 
 ## Goal
 Summarize where things stand right now, leveraging the memory file for deep context.
@@ -45,6 +45,7 @@ Summarize where things stand right now, leveraging the memory file for deep cont
 ## Rules
 - Be specific and evidence-based.
 - Separate facts from inference.
+- Do not recommend broad refactors without confirming scope; ASK if the fix would touch many areas.
 - Always read and update the memory file.
 
 ## Quality Gate

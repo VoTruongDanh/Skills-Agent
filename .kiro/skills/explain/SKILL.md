@@ -7,7 +7,7 @@ related-skills: [debug, enhance, status]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check tech stack, architecture notes, past explanations, and domain context.
-**END**: Update `.ai-memory.md` with: what was explained, key insights shared, any misconceptions clarified, and follow-up topics noted.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what was explained, key insights, misconceptions clarified, and follow-ups.
 
 ## Goal
 Help the user deeply understand code, logic, architecture, or behavior — at the level of detail they need.
@@ -60,6 +60,7 @@ If any answer is unclear, ASK before proceeding.
 - Explain the WHY, not just the WHAT — developers can read syntax themselves.
 - Match explanation depth to the user's familiarity level.
 - If the code is unclear or has issues, mention them without derailing the explanation.
+- Avoid proposing wide changes mid-explanation; if improvement requires broader edits, ASK before switching to implementation.
 - Always read and update the memory file.
 
 ## Related Skills

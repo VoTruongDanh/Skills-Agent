@@ -7,7 +7,7 @@ related-skills: [plan, test, debug]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check tech stack, coding conventions, existing patterns, architecture decisions, and file structure notes.
-**END**: Update `.ai-memory.md` with: what was created, files added/modified, patterns used, architecture decisions, and any follow-up tasks.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what was created, files touched, patterns used, decisions, and follow-ups.
 
 ## Goal
 Create a new implementation cleanly and with minimal disruption.
@@ -51,6 +51,7 @@ If any answer is unclear, ASK before proceeding.
 - Match the project's conventions.
 - Include basic validation and error handling.
 - If tests exist nearby, add or update them when appropriate.
+- Avoid changing unrelated files; if unsure about side effects, ASK before editing broadly.
 - Always read and update the memory file.
 
 ## Quality Gate

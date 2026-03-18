@@ -7,7 +7,7 @@ related-skills: [brainstorm, create, orchestrate]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check existing plans, milestones, project structure, tech stack, ongoing work, and past decisions.
-**END**: Update `.ai-memory.md` with: plan created, phases defined, tasks listed, risks identified, and recommended first action.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: plan summary, phases/tasks, key risks, and first recommended action.
 
 ## Goal
 Turn a request into an actionable plan with clear phases and tasks.
@@ -57,6 +57,7 @@ If any answer is unclear, ASK before proceeding.
 ## Rules
 - Plans should be specific enough to execute.
 - Prefer task sizes that can be completed and reviewed quickly.
+- Minimize blast radius: call out the smallest set of files likely to change; if scope is unclear, ASK.
 - Always read and update the memory file.
 
 ## Quality Gate

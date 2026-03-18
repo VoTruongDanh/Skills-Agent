@@ -7,7 +7,7 @@ related-skills: [plan, create, orchestrate]
 
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Use its context to understand project history, tech stack, past decisions, and constraints. If missing, note this and create it after completing this task.
-**END**: Update `.ai-memory.md` with: problem explored, options considered, chosen direction, constraints discovered, and any new project understanding.
+**END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: problem, options considered, chosen direction, constraints, and new project understanding.
 
 ## Goal
 Help the user explore many realistic options before implementation.
@@ -54,6 +54,7 @@ If any answer is unclear, ASK before proceeding.
 - Prefer practical ideas grounded in the current project.
 - Avoid pretending uncertain assumptions are facts.
 - If code context matters, inspect the repo structure first.
+- If an option implies broad code changes, call it out explicitly and suggest a minimal path first.
 - Always read and update the memory file.
 
 ## Quality Gate
