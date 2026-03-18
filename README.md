@@ -96,7 +96,7 @@ The `add` command:
 
 Native skill targets keep the full skill directory. Generated compatibility targets (Cursor `.mdc` rules, Antigravity workflows) only render `SKILL.md` content — companion `scripts/`, `references/`, and `assets/` remain native-only.
 
-## Available Skills (14)
+## Available Skills (15)
 
 | Skill | Description |
 |-------|-------------|
@@ -114,8 +114,17 @@ Native skill targets keep the full skill directory. Generated compatibility targ
 | `/status` | Project health, dependency, and progress reports |
 | `/test` | Generate and run tests, coverage analysis |
 | `/ui-ux-pro-max` | UI/UX design, accessibility, responsive layouts |
+| `/integrate` | Safely merge sample/snippet code into the existing system with minimal changes |
 
 All skills support both English and Vietnamese trigger keywords.
+
+## Project Memory & `.ai-memory.md`
+
+The skills share a **project-wide memory file** (`.ai-memory.md`) that captures tech stack, architecture, decisions, known issues, and recent work.  
+Memory writes are optimized to stay **short and de-duplicated**:
+- Central **Memory Compaction Rules** limit bullets per section and enforce concise, file-focused notes.
+- A lightweight **dedupe protocol** prevents duplicate bullets by normalizing/merging similar entries instead of appending.
+- Every skill’s `Memory Protocol` uses these rules, so memory stays useful over long-lived projects without growing out of control.
 
 ## Agent Routing System
 
