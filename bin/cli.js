@@ -181,48 +181,51 @@ async function interactiveInit() {
   // Step 1: Choose IDE
   const ideFlag = parseIDEFlag();
   let selectedIDE;
+  const supportedIDEOptions = [
+    { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
+    { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
+    { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
+    { label: 'Codex', value: 'codex', description: '.github/skills + AGENTS.md' },
+    { label: 'VS Code', value: 'vscode', description: '.github/skills' },
+    { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
+    { label: 'All supported IDEs', value: 'all', description: 'Install for every supported IDE' },
+  ];
 
   if (ideFlag) {
-    selectedIDE = normalizeIDEName(ideFlag);
-    if (!selectedIDE) {
+    if (String(ideFlag).trim().toLowerCase() === 'all') {
+      selectedIDE = 'all';
+      console.log(info(`IDE target: ${c.bold}All supported IDEs${c.reset} (from --ide flag)\n`));
+    } else {
+      selectedIDE = normalizeIDEName(ideFlag);
+    }
+
+    if (!selectedIDE || selectedIDE === 'generic') {
       console.log(error(`Unknown IDE: ${ideFlag}`));
+      console.log(info(`Supported: cursor, kiro, antigravity, codex, vscode, copilot, all\n`));
       rl.close();
       process.exit(1);
     }
-    const def = getIDEDefinition(selectedIDE);
-    console.log(info(`IDE: ${c.bold}${def.displayName}${c.reset} (from --ide flag)\n`));
-  } else {
-    // Auto-detect first
-    const detected = findIDEContext(process.cwd());
-    if (detected.source === 'project' && detected.ide !== 'generic') {
-      const def = getIDEDefinition(detected.ide);
-      console.log(info(`Auto-detected ${c.bold}${def.displayName}${c.reset} from ${c.dim}${detected.matchedPath}${c.reset}`));
-      const useDetected = await confirm(rl, `Use ${def.displayName}?`);
-      if (useDetected) {
-        selectedIDE = detected.ide;
-      }
-    }
 
-    if (!selectedIDE) {
-      const ideOptions = [
-        { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
-        { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
-        { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
-        { label: 'VS Code', value: 'vscode', description: '.github/skills' },
-        { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
-      ];
-      const choice = await selectMenu(rl, '🔧 Choose your IDE:', ideOptions);
-      selectedIDE = choice.value;
+    if (selectedIDE !== 'all') {
+      const def = getIDEDefinition(selectedIDE);
+      console.log(info(`IDE: ${c.bold}${def.displayName}${c.reset} (from --ide flag)\n`));
     }
+  } else {
+    const choice = await selectMenu(rl, '🔧 Choose your IDE:', supportedIDEOptions);
+    selectedIDE = choice.value;
   }
 
   // Step 2: Choose scope (project vs global)
   let scope = hasFlag('--global') ? 'global' : null;
 
   if (!scope) {
+    const globalDescription =
+      selectedIDE === 'all'
+        ? 'Install to each IDE global directory'
+        : `~/${getIDEDefinition(selectedIDE).projectRoot}`;
     const scopeOptions = [
       { label: 'This project only', value: 'project', description: process.cwd(), recommended: true },
-      { label: 'Global (all projects)', value: 'global', description: `~/${getIDEDefinition(selectedIDE).projectRoot}` },
+      { label: 'Global (all projects)', value: 'global', description: globalDescription },
     ];
     const scopeChoice = await selectMenu(rl, '📂 Install scope:', scopeOptions);
     scope = scopeChoice.value;
@@ -231,38 +234,53 @@ async function interactiveInit() {
   rl.close();
 
   // Step 3: Install
-  const ideDefinition = getIDEDefinition(selectedIDE);
   const cwd = process.cwd();
-  const projectMatch = findProjectRootForIDE(cwd, selectedIDE);
-  const baseDir = scope === 'global' ? cwd : (projectMatch ? projectMatch.projectDir : cwd);
-  const rootDir = scope === 'global' ? ideDefinition.globalRoot : path.join(baseDir, ideDefinition.projectRoot);
-  const installedVersion = getInstalledVersion(rootDir);
+  const installTargets =
+    selectedIDE === 'all'
+      ? ['cursor', 'kiro', 'antigravity', 'codex', 'vscode', 'copilot']
+      : [selectedIDE];
 
   console.log(`\n${step(1, 'Installing skills...')}`);
 
-  const result = installBundle({
-    baseDir,
-    ide: selectedIDE,
-    scope,
-    version: CURRENT_VERSION,
-    includeCompatibilityAliases: true,
-  });
+  const installResults = [];
+  for (const ide of installTargets) {
+    const ideDefinition = getIDEDefinition(ide);
+    const baseDir = cwd;
+    const rootDir =
+      scope === 'global'
+        ? ideDefinition.globalRoot
+        : path.join(baseDir, ideDefinition.projectRoot);
+    const installedVersion = getInstalledVersion(rootDir);
 
-  console.log(success(`${result.skillCount} skills installed for ${c.bold}${result.displayName}${c.reset}`));
+    const result = installBundle({
+      baseDir,
+      ide,
+      scope,
+      version: CURRENT_VERSION,
+      includeCompatibilityAliases: true,
+    });
 
-  if (installedVersion) {
-    console.log(info(`Updated: ${c.yellow}${installedVersion}${c.reset} → ${c.green}${CURRENT_VERSION}${c.reset}`));
+    installResults.push({ result, installedVersion });
+  }
+
+  for (const { result, installedVersion } of installResults) {
+    console.log(success(`${result.skillCount} skills installed for ${c.bold}${result.displayName}${c.reset}`));
+    if (installedVersion) {
+      console.log(info(`Updated: ${c.yellow}${installedVersion}${c.reset} → ${c.green}${CURRENT_VERSION}${c.reset}`));
+    }
   }
 
   console.log(`\n${step(2, 'Targets created:')}`);
-  for (const target of result.targets) {
-    const rel = path.relative(cwd, target.targetDir) || '.';
-    const tag = target.compatibility ? ` ${c.dim}(compat)${c.reset}` : '';
-    console.log(`  ${c.green}→${c.reset} ${rel}${tag}`);
+  for (const { result } of installResults) {
+    for (const target of result.targets) {
+      const rel = path.relative(cwd, target.targetDir) || '.';
+      const tag = target.compatibility ? ` ${c.dim}(compat)${c.reset}` : '';
+      console.log(`  ${c.green}→${c.reset} ${rel}${tag}`);
+    }
   }
 
   // Warnings
-  const uniqueWarnings = dedupeWarnings(result.warnings);
+  const uniqueWarnings = dedupeWarnings(installResults.flatMap(({ result }) => result.warnings));
   if (uniqueWarnings.length) {
     console.log('');
     for (const w of uniqueWarnings) {
@@ -271,8 +289,12 @@ async function interactiveInit() {
   }
 
   // Next steps
+  const nextStepIDEName =
+    selectedIDE === 'all'
+      ? 'your IDE'
+      : installResults[0].result.displayName;
   console.log(`\n${c.bold}${c.green}Done!${c.reset} Next steps:\n`);
-  console.log(`  1. ${c.dim}Reopen${c.reset} ${c.bold}${result.displayName}${c.reset}`);
+  console.log(`  1. ${c.dim}Reopen${c.reset} ${c.bold}${nextStepIDEName}${c.reset}`);
   console.log(`  2. ${c.dim}Open agent chat and type${c.reset} ${c.cyan}/${c.reset} ${c.dim}to list skills${c.reset}`);
   console.log(`  3. ${c.dim}Try:${c.reset} ${c.cyan}/create${c.reset}, ${c.cyan}/debug${c.reset}, ${c.cyan}/explain${c.reset}, or ${c.cyan}/plan${c.reset}`);
   console.log('');
@@ -394,6 +416,7 @@ async function addSkillFromGitHub() {
           { label: 'Cursor', value: 'cursor', description: '.cursor/skills', recommended: true },
           { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
           { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
+          { label: 'Codex', value: 'codex', description: '.github/skills + AGENTS.md' },
           { label: 'VS Code', value: 'vscode', description: '.github/skills' },
           { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
         ];
@@ -495,7 +518,7 @@ function printResolution(context) {
   }
 
   console.log(warn('No IDE marker found. Falling back to generic SKILL.md layout.'));
-  console.log(info(`Tip: use ${c.cyan}--ide=cursor${c.reset}, ${c.cyan}--ide=kiro${c.reset}, ${c.cyan}--ide=antigravity${c.reset}, ${c.cyan}--ide=vscode${c.reset}, or ${c.cyan}--ide=copilot${c.reset}\n`));
+  console.log(info(`Tip: use ${c.cyan}--ide=cursor${c.reset}, ${c.cyan}--ide=kiro${c.reset}, ${c.cyan}--ide=antigravity${c.reset}, ${c.cyan}--ide=codex${c.reset}, ${c.cyan}--ide=vscode${c.reset}, or ${c.cyan}--ide=copilot${c.reset}\n`));
 }
 
 function dedupeWarnings(warnings) {
@@ -554,6 +577,53 @@ function printInstallResult(result, previousVersion, scope) {
 function install(scope) {
   try {
     console.log(`\n${badge('AI Agent Skills')} v${CURRENT_VERSION}\n`);
+
+    const ideFlag = parseIDEFlag();
+    if (!ideFlag) {
+      console.log(error('Non-interactive install requires --ide=<name|all>.'));
+      console.log(info('Supported: cursor, kiro, antigravity, codex, vscode, copilot, all\n'));
+      process.exit(1);
+    }
+
+    const ideFlagNormalized = String(ideFlag).trim().toLowerCase();
+    const installTargets =
+      ideFlagNormalized === 'all'
+        ? ['cursor', 'kiro', 'antigravity', 'codex', 'vscode', 'copilot']
+        : null;
+
+    if (!installTargets && !normalizeIDEName(ideFlag)) {
+      console.log(error(`Unknown IDE: ${ideFlag}`));
+      console.log(info(`Supported: cursor, kiro, antigravity, codex, vscode, copilot, all\n`));
+      process.exit(1);
+    }
+
+    if (installTargets) {
+      console.log(info(`Using IDE target: ${c.bold}All supported IDEs${c.reset} (from --ide flag)\n`));
+      const baseDir = process.cwd();
+
+      for (const targetIDE of installTargets) {
+        const ideDefinition = getIDEDefinition(targetIDE);
+        const rootDir =
+          scope === 'global'
+            ? ideDefinition.globalRoot
+            : path.join(baseDir, ideDefinition.projectRoot);
+        const installedVersion = getInstalledVersion(rootDir);
+
+        console.log(step(1, `${installedVersion ? 'Updating' : 'Installing'} skills for ${c.bold}${ideDefinition.displayName}${c.reset}...\n`));
+
+        const result = installBundle({
+          baseDir,
+          ide: targetIDE,
+          scope,
+          version: CURRENT_VERSION,
+          includeCompatibilityAliases: true,
+        });
+
+        printInstallResult(result, installedVersion, scope);
+      }
+
+      return;
+    }
 
     const context = resolveInstallContext();
     const ideDefinition = getIDEDefinition(context.ide);
@@ -710,6 +780,8 @@ ${c.bold}Usage:${c.reset}
 
   ${c.green}npx ${PACKAGE_NAME} init${c.reset}              ${c.dim}Interactive setup (choose IDE + scope)${c.reset}
   ${c.green}npx ${PACKAGE_NAME} init --ide=cursor${c.reset}  ${c.dim}Non-interactive install for specific IDE${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} init --ide=all${c.reset}     ${c.dim}Non-interactive install for all supported IDEs${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} init --ide=codex${c.reset}   ${c.dim}Install skills for Codex-style workspace${c.reset}
   ${c.green}npx ${PACKAGE_NAME} init --ide=vscode${c.reset}  ${c.dim}Install skills to VS Code/Copilot layout${c.reset}
   ${c.green}npx ${PACKAGE_NAME} global${c.reset}            ${c.dim}Install globally for all projects${c.reset}
   ${c.green}npx ${PACKAGE_NAME} add owner/repo${c.reset}    ${c.dim}Add skills from a GitHub repository${c.reset}
@@ -729,8 +801,10 @@ ${c.bold}Supported IDEs:${c.reset}
   ${c.cyan}cursor${c.reset}       ${c.dim}→ .cursor/skills + .cursor/rules${c.reset}
   ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
   ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
+  ${c.cyan}codex${c.reset}        ${c.dim}→ .github/skills (detected via AGENTS.md / memories)${c.reset}
   ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills${c.reset}
   ${c.cyan}copilot${c.reset}      ${c.dim}→ .github/skills${c.reset}
+  ${c.cyan}all${c.reset}          ${c.dim}→ install to all IDE targets above${c.reset}
 
 ${c.bold}Available skills:${c.reset}
   ${skillNames}
@@ -744,7 +818,7 @@ const command = process.argv[2];
 
 switch (command) {
   case 'init':
-    if (parseIDEFlag() || hasFlag('--no-interactive')) {
+    if (hasFlag('--no-interactive')) {
       // Non-interactive: --ide flag or explicit opt-out
       checkForUpdates(() => install('project'));
     } else {
@@ -771,7 +845,7 @@ switch (command) {
     statusReport();
     break;
   case 'update':
-    if (parseIDEFlag() || hasFlag('--no-interactive')) {
+    if (hasFlag('--no-interactive')) {
       checkForUpdates(() => install('project'));
     } else {
       checkForUpdates(() => interactiveInit().catch((err) => {

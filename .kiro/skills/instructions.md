@@ -8,8 +8,10 @@ This project uses an **AI Skills system** with 13 skills, 11 specialist agents, 
    - If the message is empty or contains no meaningful content → Respond with a friendly greeting, list the available skills below with one-line descriptions, and ask what the user would like to work on. Do NOT proceed to classification.
    - If the message is a greeting ("hi", "hello", "hey", "xin chào", "chào") → Respond warmly, briefly list what you can help with (the skills below), and ask how you can help. Do NOT proceed to classification.
 
-1. **Read memory**: If `.ai-memory.md` exists in project root, read it first for context.
-   - If it doesn't exist, create it after completing the first task using the template at the end of this file.
+1. **Read memory**:
+   - If `.ai-memory.md` exists in project root, read it first for context.
+   - If Codex memory directories exist (`memories/`, `memories/session/`, `memories/repo/`), read relevant notes from `memories/repo/`.
+   - If `.ai-memory.md` doesn't exist, create it after completing the first task using the template at the end of this file.
 
 2. **Classify the request** — Match to one of these skills:
 
@@ -60,7 +62,9 @@ This project uses an **AI Skills system** with 13 skills, 11 specialist agents, 
 
 6. **Run quality checks**: Read `.kiro/skills/_scripts/checklist.md` for cross-cutting checks.
 
-7. **Update memory**: Save findings to `.ai-memory.md` using the **Memory Compaction Rules** in `.ai-memory.md` (short bullets, dedupe, enforce section limits).
+7. **Update memory**:
+   - Save findings to `.ai-memory.md` using the **Memory Compaction Rules** in `.ai-memory.md` (short bullets, dedupe, enforce section limits).
+   - If `memories/repo/` exists (Codex layout), mirror the most important 1-3 bullets into a repo memory note.
    - If you notice duplicates, apply `.kiro/skills/_scripts/memory-dedupe.md` and merge bullets instead of appending.
 
 ### .ai-memory.md Template (create if not exists)

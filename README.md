@@ -11,20 +11,26 @@ Cross-IDE AI agent skills with interactive CLI, dual-source `SKILL.md` discovery
 npx @votruongdanh/ai-agent-skills init
 ```
 
-The CLI launches an **interactive setup** — it auto-detects your IDE, lets you choose from a menu, and picks project vs global scope:
+The CLI launches an **interactive setup** — it always asks you to choose an IDE from the full supported list, then picks project vs global scope:
 
 ```
  AI Agent Skills  v3.2.0
 
-ℹ Auto-detected Cursor from .cursor
-  Use Cursor? (y/n): y
+🔧 Choose your IDE:
+  1) Cursor
+  2) Kiro
+  3) Antigravity
+  4) Codex
+  5) VS Code
+  6) GitHub Copilot
+  7) All supported IDEs
 
 📂 Install scope:
   1) This project only    ← recommended
   2) Global (all projects)
 
 [1] Installing skills...
-✔ 14 skills installed for Cursor
+✔ 15 skills installed for Cursor
 
 Done! Next steps:
   1. Reopen Cursor
@@ -38,14 +44,18 @@ For CI/CD or scripting, pass `--ide` to skip prompts:
 
 ```bash
 npx @votruongdanh/ai-agent-skills init --ide=cursor
+npx @votruongdanh/ai-agent-skills init --ide=all
 npx @votruongdanh/ai-agent-skills init --ide=kiro
 npx @votruongdanh/ai-agent-skills init --ide=antigravity
+npx @votruongdanh/ai-agent-skills init --ide=codex
 npx @votruongdanh/ai-agent-skills init --ide=vscode
 npx @votruongdanh/ai-agent-skills init --ide=copilot
 npx @votruongdanh/ai-agent-skills init --no-interactive
 ```
 
-The CLI also searches parent folders, so running from `src/` or `apps/web/` still detects the IDE marker at the workspace root.
+The CLI still supports marker-based context detection for status/list flows when applicable, including parent-folder lookup.
+
+For non-interactive mode (`--no-interactive`), `--ide` is required. You can pass `--ide=all` to install for every supported IDE in one run.
 
 ## Add Skills from GitHub
 
@@ -91,6 +101,7 @@ The `add` command:
 | Cursor legacy | `.cursor/rules/<skill>.mdc` | Generated compatibility layer |
 | Antigravity | `.agent/workflows/<skill>.md` | Generated workflow bridge |
 | Antigravity legacy | `agent/workflows/<skill>.md` | Compatibility alias for older setups |
+| Codex | `.github/skills/<skill>/SKILL.md` | Detected from `AGENTS.md` and/or `memories/` |
 | VS Code | `.github/skills/<skill>/SKILL.md` | Native SKILL.md format for Copilot Chat |
 | GitHub Copilot | `.github/skills/<skill>/SKILL.md` | Alias of VS Code target |
 
@@ -126,6 +137,13 @@ Memory writes are optimized to stay **short and de-duplicated**:
 - A lightweight **dedupe protocol** prevents duplicate bullets by normalizing/merging similar entries instead of appending.
 - Every skill’s `Memory Protocol` uses these rules, so memory stays useful over long-lived projects without growing out of control.
 
+For Codex-style workspaces, memory can also be mirrored into:
+- `memories/` (persistent user notes)
+- `memories/session/` (conversation-scoped notes)
+- `memories/repo/` (repo-scoped facts)
+
+`.ai-memory.md` remains the cross-IDE canonical memory file.
+
 ## Agent Routing System
 
 The `/agents` skill includes 11 specialist agent personas that are automatically selected based on your request:
@@ -147,7 +165,7 @@ The router handles keyword matching, Vietnamese triggers, compound keywords, and
 ## How the Package is Structured
 
 ```
-.kiro/skills/          # Canonical skill source (14 skills)
+.kiro/skills/          # Canonical skill source (15 skills)
 .agents/skills/        # Cross-client interop root
 lib/skill-bundle.js    # Discovery, YAML parsing, catalog, render, install
 bin/cli.js             # Interactive CLI with colors, prompts, GitHub fetcher
