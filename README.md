@@ -101,7 +101,7 @@ The `add` command:
 | Cursor legacy | `.cursor/rules/<skill>.mdc` | Generated compatibility layer |
 | Antigravity | `.agent/workflows/<skill>.md` | Generated workflow bridge |
 | Antigravity legacy | `agent/workflows/<skill>.md` | Compatibility alias for older setups |
-| Codex | `.github/skills/<skill>/SKILL.md` | Detected from `AGENTS.md` and/or `memories/` |
+| Codex | `.agents/skills/<skill>/SKILL.md` | Detected from `.agents/skills`, `AGENTS.md`, and/or `memories/` |
 | VS Code | `.github/skills/<skill>/SKILL.md` | Native SKILL.md format for Copilot Chat |
 | GitHub Copilot | `.github/skills/<skill>/SKILL.md` | Alias of VS Code target |
 

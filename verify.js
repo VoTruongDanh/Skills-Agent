@@ -250,7 +250,7 @@ license: MIT
     name: 'installBundle creates Kiro, Cursor, Antigravity, and VS Code targets',
     test: () => {
       const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-verify-'));
-      const targets = ['kiro', 'cursor', 'antigravity', 'vscode'];
+      const targets = ['kiro', 'cursor', 'antigravity', 'vscode', 'codex'];
 
       try {
         for (const ide of targets) {
@@ -279,6 +279,63 @@ license: MIT
         return true;
       } finally {
         fs.rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
+  },
+  {
+    name: 'Codex project install writes to .agents/skills',
+    test: () => {
+      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-codex-project-'));
+
+      try {
+        const result = installBundle({
+          baseDir: tempRoot,
+          ide: 'codex',
+          scope: 'project',
+          version: 'verify',
+          includeCompatibilityAliases: false,
+        });
+
+        return (
+          result.targets.length === 1 &&
+          result.targets[0].targetDir.endsWith(path.join('.agents', 'skills')) &&
+          fs.existsSync(path.join(tempRoot, '.agents', 'skills'))
+        );
+      } finally {
+        fs.rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
+  },
+  {
+    name: 'Codex global install writes to ~/.agents/skills',
+    test: () => {
+      const tempHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-codex-global-home-'));
+      const installRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-codex-global-install-'));
+      const originalHome = os.homedir;
+
+      try {
+        os.homedir = () => tempHome;
+        delete require.cache[require.resolve('./lib/skill-bundle')];
+        const reloaded = require('./lib/skill-bundle');
+
+        const result = reloaded.installBundle({
+          baseDir: installRoot,
+          ide: 'codex',
+          scope: 'global',
+          version: 'verify',
+          includeCompatibilityAliases: false,
+        });
+
+        return (
+          result.targets.length === 1 &&
+          result.targets[0].targetDir === path.join(tempHome, '.agents', 'skills') &&
+          fs.existsSync(path.join(tempHome, '.agents', 'skills'))
+        );
+      } finally {
+        os.homedir = originalHome;
+        delete require.cache[require.resolve('./lib/skill-bundle')];
+        fs.rmSync(tempHome, { recursive: true, force: true });
+        fs.rmSync(installRoot, { recursive: true, force: true });
       }
     },
   },

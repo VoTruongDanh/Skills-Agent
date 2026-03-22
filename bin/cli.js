@@ -152,11 +152,12 @@ function resolveInstallContext() {
     const normalized = normalizeIDEName(manualIDE);
     if (normalized) {
       const projectMatch = findProjectRootForIDE(cwd, normalized);
+      const useDetectedProjectRoot = projectMatch && projectMatch.projectDir === cwd;
       return {
         ide: normalized,
         source: 'flag',
-        baseDir: projectMatch ? projectMatch.projectDir : cwd,
-        matchedPath: projectMatch ? projectMatch.matchedPath : null,
+        baseDir: useDetectedProjectRoot ? projectMatch.projectDir : cwd,
+        matchedPath: useDetectedProjectRoot ? projectMatch.matchedPath : null,
       };
     }
     console.log(error(`Unknown IDE: ${manualIDE}`));
@@ -185,7 +186,7 @@ async function interactiveInit() {
     { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
     { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
     { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
-    { label: 'Codex', value: 'codex', description: '.github/skills + AGENTS.md' },
+    { label: 'Codex', value: 'codex', description: '.agents/skills (+ AGENTS.md / memories)' },
     { label: 'VS Code', value: 'vscode', description: '.github/skills' },
     { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
     { label: 'All supported IDEs', value: 'all', description: 'Install for every supported IDE' },
@@ -416,7 +417,7 @@ async function addSkillFromGitHub() {
           { label: 'Cursor', value: 'cursor', description: '.cursor/skills', recommended: true },
           { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
           { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
-          { label: 'Codex', value: 'codex', description: '.github/skills + AGENTS.md' },
+          { label: 'Codex', value: 'codex', description: '.agents/skills (+ AGENTS.md / memories)' },
           { label: 'VS Code', value: 'vscode', description: '.github/skills' },
           { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
         ];
@@ -801,7 +802,7 @@ ${c.bold}Supported IDEs:${c.reset}
   ${c.cyan}cursor${c.reset}       ${c.dim}→ .cursor/skills + .cursor/rules${c.reset}
   ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
   ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
-  ${c.cyan}codex${c.reset}        ${c.dim}→ .github/skills (detected via AGENTS.md / memories)${c.reset}
+  ${c.cyan}codex${c.reset}        ${c.dim}→ .agents/skills (detected via AGENTS.md / memories)${c.reset}
   ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills${c.reset}
   ${c.cyan}copilot${c.reset}      ${c.dim}→ .github/skills${c.reset}
   ${c.cyan}all${c.reset}          ${c.dim}→ install to all IDE targets above${c.reset}
