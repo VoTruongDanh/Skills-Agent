@@ -67,6 +67,7 @@ This project uses an **AI Skills system** with 16 skills, 11 specialist agents, 
    - Save findings to `.ai-memory.md` using the **Memory Compaction Rules** in `.ai-memory.md` (short bullets, dedupe, enforce section limits).
    - If `memories/repo/` exists (Codex layout), mirror the most important 1-3 bullets into a repo memory note.
    - If you notice duplicates, apply `.kiro/skills/_scripts/memory-dedupe.md` and merge bullets instead of appending.
+   - If `.ai-memory.md` exceeds 500 lines or sections exceed limits, apply `.kiro/skills/_scripts/memory-compact.md` to compact it.
 
 ### .ai-memory.md Template (create if not exists)
 

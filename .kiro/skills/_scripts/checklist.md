@@ -15,8 +15,9 @@ description: Reusable pre/post checklists for any skill execution
 - [ ] All checklist items from the skill are satisfied
 - [ ] No regressions introduced
 - [ ] Code follows existing project conventions
-- [ ] Update `.ai-memory.md` with findings (follow “Memory Compaction Rules”)
+- [ ] Update `.ai-memory.md` with findings (follow "Memory Compaction Rules")
 - [ ] Dedupe `.ai-memory.md` updates: merge similar bullets instead of appending duplicates
+- [ ] If `.ai-memory.md` exceeds 500 lines or sections exceed limits, compact it (see `.kiro/skills/_scripts/memory-compact.md`)
 - [ ] Suggest related next steps
 
 ## Code Quality Checklist
