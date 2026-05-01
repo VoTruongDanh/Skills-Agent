@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.3.0] - 2026-05-01
+
+### Added
+- **New Skill: motion-ui** - Advanced Motion UI (AMUI) with Framer Motion micro-interactions
+  - Complete design system with tokens (colors, timing, easing)
+  - 6 component patterns (Button, Input, Alert, Success View, Card, Modal)
+  - Motion rules and animation guidelines
+  - Accessibility support (prefers-reduced-motion)
+  - 3 example components with TypeScript/React code
+- **Memory Compaction System** - New documentation for managing `.ai-memory.md`
+  - `.kiro/skills/_scripts/memory-compact.md` - Full compaction procedure
+  - Updated checklist.md with memory compaction checks
+  - Updated instructions.md with compaction guidelines
+
+### Enhanced
+- Updated all documentation to reflect 16 skills (was 15)
+- Updated README.md with motion-ui skill
+- Updated verify.js to check for 16 skills
+- Improved memory management documentation
+
+### Skills Now Include (16 total)
+- agents, brainstorm, clean, create, debug, deploy, enhance, explain, integrate, **motion-ui (NEW)**, orchestrate, plan, preview, status, test, ui-ux-pro-max
+
+### Infrastructure
+- Added GitHub Actions workflow for automated npm publishing
+- Updated release scripts to only create tags (publish is automated)
+- Improved Update.md with GitHub Actions setup guide
+
 ## [1.5.0] - 2026-03-05
 
 ### Added
