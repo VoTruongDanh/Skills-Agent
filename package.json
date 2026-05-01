@@ -9,9 +9,9 @@
   "scripts": {
     "build:targets": "node scripts/render-targets.js",
     "test": "node verify.js",
-    "release:patch": "npm version patch && git push --follow-tags && npm publish --access public",
-    "release:minor": "npm version minor && git push --follow-tags && npm publish --access public",
-    "release:major": "npm version major && git push --follow-tags && npm publish --access public"
+    "release:patch": "npm version patch && git push origin main --tags",
+    "release:minor": "npm version minor && git push origin main --tags",
+    "release:major": "npm version major && git push origin main --tags"
   },
   "keywords": [
     "kiro",
