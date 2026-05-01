@@ -19,11 +19,12 @@ The CLI launches an **interactive setup** — it always asks you to choose an ID
 🔧 Choose your IDE:
   1) Cursor
   2) Kiro
-  3) Antigravity
-  4) Codex
-  5) VS Code
-  6) GitHub Copilot
-  7) All supported IDEs
+  3) Claude Code
+  4) Antigravity
+  5) Codex
+  6) VS Code
+  7) GitHub Copilot
+  8) All supported IDEs
 
 📂 Install scope:
   1) This project only    ← recommended
@@ -46,6 +47,7 @@ For CI/CD or scripting, pass `--ide` to skip prompts:
 npx @votruongdanh/ai-agent-skills init --ide=cursor
 npx @votruongdanh/ai-agent-skills init --ide=all
 npx @votruongdanh/ai-agent-skills init --ide=kiro
+npx @votruongdanh/ai-agent-skills init --ide=claude-code
 npx @votruongdanh/ai-agent-skills init --ide=antigravity
 npx @votruongdanh/ai-agent-skills init --ide=codex
 npx @votruongdanh/ai-agent-skills init --ide=vscode
@@ -99,6 +101,7 @@ The `add` command:
 | Kiro | `.kiro/skills/<skill>/SKILL.md` | Native skill format |
 | Cursor | `.cursor/skills/<skill>/SKILL.md` | Native skill format |
 | Cursor legacy | `.cursor/rules/<skill>.mdc` | Generated compatibility layer |
+| Claude Code | `.claude/skills/<skill>/SKILL.md` | Native skill format (Agent Skills standard) |
 | Antigravity | `.agent/workflows/<skill>.md` | Generated workflow bridge |
 | Antigravity legacy | `agent/workflows/<skill>.md` | Compatibility alias for older setups |
 | Codex | `.agents/skills/<skill>/SKILL.md` | Detected from `.agents/skills`, `AGENTS.md`, and/or `memories/` |

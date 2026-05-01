@@ -3,6 +3,10 @@
 ## [3.3.0] - 2026-05-01
 
 ### Added
+- **New IDE Support: Claude Code** - Full support for Claude Code IDE
+  - Native `.claude/skills/<skill>/SKILL.md` format
+  - Follows Agent Skills open standard
+  - Auto-detection via `.claude` directory and `CLAUDE.md` file
 - **New Skill: motion-ui** - Advanced Motion UI (AMUI) with Framer Motion micro-interactions
   - Complete design system with tokens (colors, timing, easing)
   - 6 component patterns (Button, Input, Alert, Success View, Card, Modal)
@@ -16,9 +20,10 @@
 
 ### Enhanced
 - Updated all documentation to reflect 16 skills (was 15)
-- Updated README.md with motion-ui skill
+- Updated README.md with motion-ui skill and Claude Code support
 - Updated verify.js to check for 16 skills
 - Improved memory management documentation
+- CLI now supports `--ide=claude-code` flag
 
 ### Skills Now Include (16 total)
 - agents, brainstorm, clean, create, debug, deploy, enhance, explain, integrate, **motion-ui (NEW)**, orchestrate, plan, preview, status, test, ui-ux-pro-max
@@ -27,6 +32,9 @@
 - Added GitHub Actions workflow for automated npm publishing
 - Updated release scripts to only create tags (publish is automated)
 - Improved Update.md with GitHub Actions setup guide
+
+### Supported IDEs (8 total)
+- Kiro, Cursor, **Claude Code (NEW)**, Antigravity, Codex, VS Code, GitHub Copilot, Generic
 
 ## [1.5.0] - 2026-03-05
 
