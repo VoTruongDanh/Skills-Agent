@@ -79,7 +79,7 @@ const checks = [
     test: () => CANONICAL_SKILL_ROOTS.some((root) => fs.existsSync(root)),
   },
   {
-    name: 'All 15 bundled skills are discoverable',
+    name: 'All 16 bundled skills are discoverable',
     test: () => {
       const expectedSkills = [
         'agents',
@@ -91,6 +91,7 @@ const checks = [
         'enhance',
         'explain',
         'integrate',
+        'motion-ui',
         'orchestrate',
         'plan',
         'preview',

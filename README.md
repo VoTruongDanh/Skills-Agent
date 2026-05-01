@@ -30,7 +30,7 @@ The CLI launches an **interactive setup** — it always asks you to choose an ID
   2) Global (all projects)
 
 [1] Installing skills...
-✔ 15 skills installed for Cursor
+✔ 16 skills installed for Cursor
 
 Done! Next steps:
   1. Reopen Cursor
@@ -107,7 +107,7 @@ The `add` command:
 
 Native skill targets keep the full skill directory. Generated compatibility targets (Cursor `.mdc` rules, Antigravity workflows) only render `SKILL.md` content — companion `scripts/`, `references/`, and `assets/` remain native-only.
 
-## Available Skills (15)
+## Available Skills (16)
 
 | Skill | Description |
 |-------|-------------|
@@ -119,13 +119,14 @@ Native skill targets keep the full skill directory. Generated compatibility targ
 | `/deploy` | Deployment, CI/CD, release preparation |
 | `/enhance` | Refactor, optimize, tighten security, improve UX |
 | `/explain` | Explain code, walk through logic and architecture |
+| `/integrate` | Safely merge sample/snippet code into the existing system with minimal changes |
+| `/motion-ui` | Motion UI with Framer Motion micro-interactions and smooth animations |
 | `/orchestrate` | Coordinate multi-step plans across domains |
 | `/plan` | Implementation plans with milestones and breakdown |
 | `/preview` | Preview output, UX flows, mockups before building |
 | `/status` | Project health, dependency, and progress reports |
 | `/test` | Generate and run tests, coverage analysis |
 | `/ui-ux-pro-max` | UI/UX design, accessibility, responsive layouts |
-| `/integrate` | Safely merge sample/snippet code into the existing system with minimal changes |
 
 All skills support both English and Vietnamese trigger keywords.
 
@@ -165,7 +166,7 @@ The router handles keyword matching, Vietnamese triggers, compound keywords, and
 ## How the Package is Structured
 
 ```
-.kiro/skills/          # Canonical skill source (15 skills)
+.kiro/skills/          # Canonical skill source (16 skills)
 .agents/skills/        # Cross-client interop root
 lib/skill-bundle.js    # Discovery, YAML parsing, catalog, render, install
 bin/cli.js             # Interactive CLI with colors, prompts, GitHub fetcher

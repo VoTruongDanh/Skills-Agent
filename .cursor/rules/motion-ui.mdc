@@ -1,0 +1,46 @@
+---
+description: "Use when the user wants motion-rich UI with Framer Motion micro-interactions, smooth animations, or types /motion-ui."
+globs: ""
+alwaysApply: false
+---
+
+## Goal
+Create clean, modern UI with subtle Framer Motion micro-interactions, clear states (idle/loading/success/error), and consistent styling via design tokens.
+
+## Design Principles (AMUI)
+1. **Clarity-first**: States always clear (idle/hover/active/loading/success/error/disabled)
+2. **Motion with purpose**: Animation guides attention, shows system response, reduces jarring changes
+3. **Subtle micro-interactions**: Hover scale 1.01-1.02, tap scale 0.97-0.98
+4. **Immediate feedback**: Validation/submit shows loading + success (green check) + error (alert)
+
+## Workflow
+1. Identify component/page needing motion UI
+2. Set up design tokens (CSS variables for colors, timing, easing)
+3. Implement component with all states (idle/hover/active/loading/success/error/disabled)
+4. Add Framer Motion animations:
+   - Enter: opacity 0→1, y 8→0, duration 0.18-0.28s easeOut
+   - Exit: opacity 1→0, y 0→-10, duration 0.16-0.24s easeIn
+   - Button: whileHover scale 1.015, whileTap scale 0.975
+5. Use AnimatePresence for conditional UI (error/success panels)
+6. Ensure accessibility: aria attributes, focus management, prefers-reduced-motion
+7. Test all interactive states
+
+## Motion Rules
+- **Small transitions**: 120-180ms
+- **Enter/exit**: 180-240ms
+- **Easing**: easeOut for enter, easeIn for exit
+- **Layout stability**: Maintain widths, smooth height changes
+
+## Component Patterns
+- **Button**: 3 sizes, 5 states, optional icons, micro-interactions
+- **Input**: Label + hint + error, focus ring, validation states
+- **Alert/Toast**: Success/error/warning/info with animation
+- **Success Check View**: Large check icon + text, scale-in animation
+
+## Rules
+- Motion should enhance, not distract
+- Keep animations subtle and purposeful
+- Always provide immediate visual feedback
+- Maintain layout stability (no jumps during loading)
+- Respect user motion preferences (prefers-reduced-motion)
+- Use design tokens consistently

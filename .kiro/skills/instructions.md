@@ -1,6 +1,6 @@
 ## AI Agent Skills — System Bootstrap
 
-This project uses an **AI Skills system** with 13 skills, 11 specialist agents, and a memory protocol.
+This project uses an **AI Skills system** with 16 skills, 11 specialist agents, and a memory protocol.
 
 ### On EVERY request, follow this flow:
 
@@ -29,6 +29,7 @@ This project uses an **AI Skills system** with 13 skills, 11 specialist agents, 
    | `/preview` | `.kiro/skills/preview/SKILL.md` | Preview output/UX before implementing |
    | `/orchestrate` | `.kiro/skills/orchestrate/SKILL.md` | Coordinate multi-step workflows |
    | `/ui-ux-pro-max` | `.kiro/skills/ui-ux-pro-max/SKILL.md` | Advanced UI/UX improvements |
+   | `/motion-ui` | `.kiro/skills/motion-ui/SKILL.md` | Motion UI with Framer Motion micro-interactions |
    | `/explain` | `.kiro/skills/explain/SKILL.md` | Explain code, walk through logic, understand architecture |
    | `/integrate` | `.kiro/skills/integrate/SKILL.md` | Integrate provided sample code with minimal impact |
 
