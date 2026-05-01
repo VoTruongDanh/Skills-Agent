@@ -185,6 +185,7 @@ async function interactiveInit() {
   const supportedIDEOptions = [
     { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
     { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
+    { label: 'Claude Code', value: 'claude-code', description: '.claude/skills' },
     { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
     { label: 'Codex', value: 'codex', description: '.agents/skills (+ AGENTS.md / memories)' },
     { label: 'VS Code', value: 'vscode', description: '.github/skills' },
@@ -416,6 +417,7 @@ async function addSkillFromGitHub() {
         const ideOptions = [
           { label: 'Cursor', value: 'cursor', description: '.cursor/skills', recommended: true },
           { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
+          { label: 'Claude Code', value: 'claude-code', description: '.claude/skills' },
           { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
           { label: 'Codex', value: 'codex', description: '.agents/skills (+ AGENTS.md / memories)' },
           { label: 'VS Code', value: 'vscode', description: '.github/skills' },
@@ -801,6 +803,7 @@ ${c.bold}Supported IDEs:${c.reset}
 
   ${c.cyan}cursor${c.reset}       ${c.dim}→ .cursor/skills + .cursor/rules${c.reset}
   ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
+  ${c.cyan}claude-code${c.reset}  ${c.dim}→ .claude/skills${c.reset}
   ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
   ${c.cyan}codex${c.reset}        ${c.dim}→ .agents/skills (detected via AGENTS.md / memories)${c.reset}
   ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills${c.reset}
