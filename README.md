@@ -110,6 +110,16 @@ The `add` command:
 
 Native skill targets keep the full skill directory. Generated compatibility targets (Cursor `.mdc` rules, Antigravity workflows) only render `SKILL.md` content — companion `scripts/`, `references/`, and `assets/` remain native-only.
 
+## For AI Agents & Developers: How to Edit Skills
+
+All skills are now stored in the `skills/` directory at the root of the project. This is the **canonical source of truth**.
+
+When you need to edit, update, or add a new skill:
+1. Edit the Markdown files directly in the `skills/` directory.
+2. Run `npm run sync:all` to automatically synchronize your changes to all supported IDE formats (Cursor, Kiro, Antigravity, VS Code, Codex, etc.).
+
+**Note:** DO NOT manually edit the generated files in `.agent/workflows/`, `.cursor/rules/`, or similar IDE-specific folders, as your changes will be overwritten upon sync.
+
 ## Available Skills (16)
 
 | Skill | Description |
@@ -169,16 +179,17 @@ The router handles keyword matching, Vietnamese triggers, compound keywords, and
 ## How the Package is Structured
 
 ```
-.kiro/skills/          # Canonical skill source (16 skills)
+skills/                # Canonical skill source (16 skills)
 .agents/skills/        # Cross-client interop root
 lib/skill-bundle.js    # Discovery, YAML parsing, catalog, render, install
 bin/cli.js             # Interactive CLI with colors, prompts, GitHub fetcher
 bin/install-skills.ps1 # Optional PowerShell wrapper
 scripts/render-targets.js  # Sample output renderer
+scripts/sync-all.js    # Script to sync 'skills/' to all IDE folders
 verify.js              # 44-check test suite
 ```
 
-- Canonical source prefers `.skills`, then falls back to `.kiro/skills`
+- Canonical source prefers `skills/`, then falls back to `.skills`
 - `lib/skill-bundle.js` contains all discovery, parsing, rendering, and install logic
 - `bin/cli.js` provides interactive install, GitHub `add`, list, status, and help commands
 - Each skill exposes: `slug`, `name`, `description`, `sourceRoot`, `hasScripts`, `hasReferences`, `hasAssets`, and per-target compatibility metadata

@@ -9,6 +9,7 @@
   "scripts": {
     "build:targets": "node scripts/render-targets.js",
     "test": "node verify.js",
+    "sync:all": "node scripts/sync-all.js",
     "release:patch": "npm version patch && git push origin main --tags",
     "release:minor": "npm version minor && git push origin main --tags",
     "release:major": "npm version major && git push origin main --tags"
@@ -43,6 +44,7 @@
   },
   "homepage": "https://github.com/votruongdanh/ai-agent-skills#readme",
   "files": [
+    "skills",
     ".skills",
     ".agents",
     ".kiro",
