@@ -1,6 +1,6 @@
 {
   "name": "@votruongdanh/ai-agent-skills",
-  "version": "3.3.4",
+  "version": "3.4.0",
   "description": "Cross-IDE AI agent skills with native installers for Kiro, Cursor, Windsurf, Claude Code, Antigravity, and VS Code/Copilot",
   "main": "index.js",
   "bin": {
