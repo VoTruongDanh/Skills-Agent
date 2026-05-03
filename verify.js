@@ -248,10 +248,10 @@ license: MIT
     },
   },
   {
-    name: 'installBundle creates Kiro, Cursor, Antigravity, and VS Code targets',
+    name: 'installBundle creates Kiro, Cursor, Claude Code, Windsurf, Antigravity, Codex, and VS Code targets',
     test: () => {
       const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-verify-'));
-      const targets = ['kiro', 'cursor', 'antigravity', 'vscode', 'codex'];
+      const targets = ['kiro', 'cursor', 'claude-code', 'windsurf', 'antigravity', 'codex', 'vscode'];
 
       try {
         for (const ide of targets) {
@@ -278,6 +278,29 @@ license: MIT
         }
 
         return true;
+      } finally {
+        fs.rmSync(tempRoot, { recursive: true, force: true });
+      }
+    },
+  },
+  {
+    name: 'findIDEContext detects Windsurf markers from parent workspace folders',
+    test: () => {
+      const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-skills-windsurf-detect-'));
+
+      try {
+        const workspaceRoot = path.join(tempRoot, 'workspace');
+        const nestedDir = path.join(workspaceRoot, 'apps', 'web');
+        fs.mkdirSync(path.join(workspaceRoot, '.windsurf'), { recursive: true });
+        fs.mkdirSync(nestedDir, { recursive: true });
+
+        const result = findIDEContext(nestedDir);
+        return (
+          result.ide === 'windsurf' &&
+          result.source === 'project' &&
+          result.projectDir === workspaceRoot &&
+          result.matchedPath === '.windsurf'
+        );
       } finally {
         fs.rmSync(tempRoot, { recursive: true, force: true });
       }
@@ -418,7 +441,7 @@ description: Asset demo
       return (
         plain.includes('Available skills') &&
         plain.includes('/plan') &&
-        plain.includes('source: .kiro/skills') &&
+        plain.includes('source: skills') &&
         plain.includes('skill: native')
       );
     },

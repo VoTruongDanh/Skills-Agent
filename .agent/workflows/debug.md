@@ -3,6 +3,8 @@ description: "Root-cause analysis for bugs, failing commands, broken behavior, a
 agents: [debugger, backend-specialist, frontend-specialist]
 ---
 
+Canonical source: .kiro/skills/debug/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check for known bugs, past fixes, tech stack details, common error patterns, and architecture notes.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: bug, root cause, fix, files touched, lessons learned, and remaining risks.

@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **New IDE Support: Windsurf/Cascade** - Native `.windsurf/skills/<skill>/SKILL.md` support
+  - Project installs to `.windsurf/skills/<skill>/SKILL.md`
+  - Global installs to `~/.codeium/windsurf/skills/<skill>/SKILL.md`
+  - CLI support for `--ide=windsurf` and `--ide=cascade`
+
 ## [3.3.0] - 2026-05-01
 
 ### Added

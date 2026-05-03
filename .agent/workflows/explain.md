@@ -3,6 +3,8 @@ description: "Explain code, walk through logic, and help understand architecture
 agents: [documentation-writer, backend-specialist, frontend-specialist]
 ---
 
+Canonical source: .kiro/skills/explain/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check tech stack, architecture notes, past explanations, and domain context.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what was explained, key insights, misconceptions clarified, and follow-ups.

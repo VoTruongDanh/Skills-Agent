@@ -3,6 +3,8 @@ description: "Create concrete implementation plans with milestones, task breakdo
 agents: [project-planner, orchestrator]
 ---
 
+Canonical source: .kiro/skills/plan/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check existing plans, milestones, project structure, tech stack, ongoing work, and past decisions.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: plan summary, phases/tasks, key risks, and first recommended action.

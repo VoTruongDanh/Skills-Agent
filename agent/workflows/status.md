@@ -3,6 +3,8 @@ description: "Project status summary, progress snapshots, repo overview, and out
 agents: [project-planner, orchestrator]
 ---
 
+Canonical source: .kiro/skills/status/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. This is the PRIMARY source for status — check all recorded history, decisions, tasks, bugs, and milestones.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: status snapshot, what's working, gaps, risks, and priorities.

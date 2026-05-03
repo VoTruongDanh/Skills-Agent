@@ -3,6 +3,8 @@ description: "Integrate provided sample code/snippets into the existing system w
 agents: [backend-specialist, frontend-specialist, debugger]
 ---
 
+Canonical source: .kiro/skills/integrate/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Focus on: entry points, key directories, conventions, and any integration decisions already logged.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: integration points, files touched, behavior changes (if any), and verification notes.

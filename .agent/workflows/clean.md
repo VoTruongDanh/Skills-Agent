@@ -3,6 +3,8 @@ description: "Clean up junk files, temporary files, AI-generated artifacts, and 
 agents: [devops-engineer]
 ---
 
+Canonical source: .kiro/skills/clean/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check for known junk patterns, previous cleanup history, and project-specific ignore rules.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what was cleaned, space recovered, ignore rules added, and recurring patterns.

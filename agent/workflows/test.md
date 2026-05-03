@@ -3,6 +3,8 @@ description: "Write tests, improve coverage, define test strategy, and add valid
 agents: [test-engineer, debugger]
 ---
 
+Canonical source: .kiro/skills/test/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check test framework in use, existing test coverage, known failing tests, testing patterns, and CI/CD test configuration.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: tests changed, coverage deltas (if known), patterns established, and gaps.

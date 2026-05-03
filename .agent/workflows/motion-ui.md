@@ -3,6 +3,8 @@ description: "Advanced Motion UI (AMUI) — Create clean, modern UI with subtle 
 agents: [frontend-specialist]
 ---
 
+Canonical source: .kiro/skills/motion-ui/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check design tokens, motion patterns, component library, animation conventions, and accessibility settings (prefers-reduced-motion).
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: motion patterns used, components created, animation decisions, and accessibility notes.

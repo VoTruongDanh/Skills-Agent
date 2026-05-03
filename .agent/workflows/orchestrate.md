@@ -3,6 +3,8 @@ description: "Coordinate multi-step plans across multiple roles, files, systems,
 agents: [orchestrator, project-planner]
 ---
 
+Canonical source: .kiro/skills/orchestrate/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check project architecture, team structure, past orchestration plans, ongoing tasks, and blockers.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: workstreams, assignments, dependencies, execution order, and blockers/risks.

@@ -6,7 +6,7 @@ const { installBundle } = require('../lib/skill-bundle');
 const pkg = require('../package.json');
 
 const repoRoot = path.join(__dirname, '..');
-const targets = ['cursor', 'antigravity', 'vscode'];
+const targets = ['cursor', 'windsurf', 'antigravity', 'vscode'];
 const generatedRoot = path.join(repoRoot, 'generated');
 
 for (const ide of targets) {
@@ -19,4 +19,4 @@ for (const ide of targets) {
   });
 }
 
-console.log('Rendered generated skill targets for Cursor, Antigravity, and VS Code/Copilot.');
+console.log('Rendered generated skill targets for Cursor, Windsurf, Antigravity, and VS Code/Copilot.');

@@ -20,11 +20,12 @@ The CLI launches an **interactive setup** — it always asks you to choose an ID
   1) Cursor
   2) Kiro
   3) Claude Code
-  4) Antigravity
-  5) Codex
-  6) VS Code
-  7) GitHub Copilot
-  8) All supported IDEs
+  4) Windsurf
+  5) Antigravity
+  6) Codex
+  7) VS Code
+  8) GitHub Copilot
+  9) All supported IDEs
 
 📂 Install scope:
   1) This project only    ← recommended
@@ -48,6 +49,7 @@ npx @votruongdanh/ai-agent-skills init --ide=cursor
 npx @votruongdanh/ai-agent-skills init --ide=all
 npx @votruongdanh/ai-agent-skills init --ide=kiro
 npx @votruongdanh/ai-agent-skills init --ide=claude-code
+npx @votruongdanh/ai-agent-skills init --ide=windsurf
 npx @votruongdanh/ai-agent-skills init --ide=antigravity
 npx @votruongdanh/ai-agent-skills init --ide=codex
 npx @votruongdanh/ai-agent-skills init --ide=vscode
@@ -102,6 +104,7 @@ The `add` command:
 | Cursor | `.cursor/skills/<skill>/SKILL.md` | Native skill format |
 | Cursor legacy | `.cursor/rules/<skill>.mdc` | Generated compatibility layer |
 | Claude Code | `.claude/skills/<skill>/SKILL.md` | Native skill format (Agent Skills standard) |
+| Windsurf | `.windsurf/skills/<skill>/SKILL.md` | Native skill format; global: `~/.codeium/windsurf/skills/<skill>/SKILL.md` |
 | Antigravity | `.agent/workflows/<skill>.md` | Generated workflow bridge |
 | Antigravity legacy | `agent/workflows/<skill>.md` | Compatibility alias for older setups |
 | Codex | `.agents/skills/<skill>/SKILL.md` | Detected from `.agents/skills`, `AGENTS.md`, and/or `memories/` |
@@ -116,7 +119,7 @@ All skills are now stored in the `skills/` directory at the root of the project.
 
 When you need to edit, update, or add a new skill:
 1. Edit the Markdown files directly in the `skills/` directory.
-2. Run `npm run sync:all` to automatically synchronize your changes to all supported IDE formats (Cursor, Kiro, Antigravity, VS Code, Codex, etc.).
+2. Run `npm run sync:all` to automatically synchronize your changes to all supported IDE formats (Cursor, Kiro, Windsurf, Antigravity, VS Code, Codex, etc.).
 
 **Note:** DO NOT manually edit the generated files in `.agent/workflows/`, `.cursor/rules/`, or similar IDE-specific folders, as your changes will be overwritten upon sync.
 

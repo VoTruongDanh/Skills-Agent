@@ -3,6 +3,8 @@ description: "Advanced UI/UX improvements — layout, design critique, copy refi
 agents: [frontend-specialist, performance-optimizer]
 ---
 
+Canonical source: .kiro/skills/ui-ux-pro-max/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check design system, brand guidelines, component library, past UI decisions, accessibility notes, and responsive design patterns.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: UI/UX changes, patterns used, a11y improvements, and brand consistency notes.

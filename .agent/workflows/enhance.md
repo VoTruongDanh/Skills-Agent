@@ -3,6 +3,8 @@ description: "Improve existing code — refactor, optimize performance, tighten 
 agents: [performance-optimizer, security-auditor, frontend-specialist]
 ---
 
+Canonical source: .kiro/skills/enhance/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check past enhancements, known pain points, tech debt notes, performance baselines, and architecture decisions.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what changed, impact, tradeoffs, and remaining tech debt.

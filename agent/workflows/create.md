@@ -3,6 +3,8 @@ description: "Build new features, files, components, endpoints, pages, or script
 agents: [backend-specialist, frontend-specialist, database-architect]
 ---
 
+Canonical source: .kiro/skills/create/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check tech stack, coding conventions, existing patterns, architecture decisions, and file structure notes.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what was created, files touched, patterns used, decisions, and follow-ups.

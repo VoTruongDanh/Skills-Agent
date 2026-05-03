@@ -2,6 +2,8 @@
 description: "Agent routing system — automatically selects the best specialist agent based on user request domain. Handles keyword matching, Vietnamese and English triggers, compound-keyword routing, vague-request fallback, and multi-agent coordination. This skill is always loaded silently."
 ---
 
+Canonical source: .kiro/skills/agents/SKILL.md
+
 ## Purpose
 This is the master agent routing skill. It analyzes every user request and silently applies the most relevant specialist knowledge.
 

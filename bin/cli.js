@@ -10,7 +10,6 @@ const readline = require('readline');
 const {
   findIDEContext,
   findProjectRootForIDE,
-  getAvailableIDENames,
   getIDEDefinition,
   getInstalledVersion,
   getSkillCatalog,
@@ -22,6 +21,7 @@ const {
 
 const PACKAGE_NAME = '@votruongdanh/ai-agent-skills';
 const CURRENT_VERSION = require('../package.json').version;
+const SUPPORTED_IDES = ['cursor', 'kiro', 'claude-code', 'windsurf', 'antigravity', 'codex', 'vscode', 'copilot'];
 
 // ─── ANSI Colors ────────────────────────────────────────────────────────────
 const c = {
@@ -161,7 +161,7 @@ function resolveInstallContext() {
       };
     }
     console.log(error(`Unknown IDE: ${manualIDE}`));
-    console.log(info(`Supported: ${getAvailableIDENames().join(', ')}\n`));
+    console.log(info(`Supported: ${SUPPORTED_IDES.join(', ')}, all\n`));
   }
 
   const detected = findIDEContext(cwd);
@@ -186,6 +186,7 @@ async function interactiveInit() {
     { label: 'Cursor', value: 'cursor', description: '.cursor/skills + .cursor/rules', recommended: true },
     { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
     { label: 'Claude Code', value: 'claude-code', description: '.claude/skills' },
+    { label: 'Windsurf', value: 'windsurf', description: '.windsurf/skills' },
     { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
     { label: 'Codex', value: 'codex', description: '.agents/skills (+ AGENTS.md / memories)' },
     { label: 'VS Code', value: 'vscode', description: '.github/skills' },
@@ -203,7 +204,7 @@ async function interactiveInit() {
 
     if (!selectedIDE || selectedIDE === 'generic') {
       console.log(error(`Unknown IDE: ${ideFlag}`));
-      console.log(info(`Supported: cursor, kiro, antigravity, codex, vscode, copilot, all\n`));
+      console.log(info(`Supported: ${SUPPORTED_IDES.join(', ')}, all\n`));
       rl.close();
       process.exit(1);
     }
@@ -238,9 +239,7 @@ async function interactiveInit() {
   // Step 3: Install
   const cwd = process.cwd();
   const installTargets =
-    selectedIDE === 'all'
-      ? ['cursor', 'kiro', 'antigravity', 'codex', 'vscode', 'copilot']
-      : [selectedIDE];
+    selectedIDE === 'all' ? SUPPORTED_IDES : [selectedIDE];
 
   console.log(`\n${step(1, 'Installing skills...')}`);
 
@@ -418,6 +417,7 @@ async function addSkillFromGitHub() {
           { label: 'Cursor', value: 'cursor', description: '.cursor/skills', recommended: true },
           { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
           { label: 'Claude Code', value: 'claude-code', description: '.claude/skills' },
+          { label: 'Windsurf', value: 'windsurf', description: '.windsurf/skills' },
           { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
           { label: 'Codex', value: 'codex', description: '.agents/skills (+ AGENTS.md / memories)' },
           { label: 'VS Code', value: 'vscode', description: '.github/skills' },
@@ -584,19 +584,16 @@ function install(scope) {
     const ideFlag = parseIDEFlag();
     if (!ideFlag) {
       console.log(error('Non-interactive install requires --ide=<name|all>.'));
-      console.log(info('Supported: cursor, kiro, antigravity, codex, vscode, copilot, all\n'));
+      console.log(info(`Supported: ${SUPPORTED_IDES.join(', ')}, all\n`));
       process.exit(1);
     }
 
     const ideFlagNormalized = String(ideFlag).trim().toLowerCase();
-    const installTargets =
-      ideFlagNormalized === 'all'
-        ? ['cursor', 'kiro', 'antigravity', 'codex', 'vscode', 'copilot']
-        : null;
+    const installTargets = ideFlagNormalized === 'all' ? SUPPORTED_IDES : null;
 
     if (!installTargets && !normalizeIDEName(ideFlag)) {
       console.log(error(`Unknown IDE: ${ideFlag}`));
-      console.log(info(`Supported: cursor, kiro, antigravity, codex, vscode, copilot, all\n`));
+      console.log(info(`Supported: ${SUPPORTED_IDES.join(', ')}, all\n`));
       process.exit(1);
     }
 
@@ -785,6 +782,7 @@ ${c.bold}Usage:${c.reset}
   ${c.green}npx ${PACKAGE_NAME} init --ide=cursor${c.reset}  ${c.dim}Non-interactive install for specific IDE${c.reset}
   ${c.green}npx ${PACKAGE_NAME} init --ide=all${c.reset}     ${c.dim}Non-interactive install for all supported IDEs${c.reset}
   ${c.green}npx ${PACKAGE_NAME} init --ide=codex${c.reset}   ${c.dim}Install skills for Codex-style workspace${c.reset}
+  ${c.green}npx ${PACKAGE_NAME} init --ide=windsurf${c.reset} ${c.dim}Install skills for Windsurf Cascade${c.reset}
   ${c.green}npx ${PACKAGE_NAME} init --ide=vscode${c.reset}  ${c.dim}Install skills to VS Code/Copilot layout${c.reset}
   ${c.green}npx ${PACKAGE_NAME} global${c.reset}            ${c.dim}Install globally for all projects${c.reset}
   ${c.green}npx ${PACKAGE_NAME} add owner/repo${c.reset}    ${c.dim}Add skills from a GitHub repository${c.reset}
@@ -804,6 +802,7 @@ ${c.bold}Supported IDEs:${c.reset}
   ${c.cyan}cursor${c.reset}       ${c.dim}→ .cursor/skills + .cursor/rules${c.reset}
   ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
   ${c.cyan}claude-code${c.reset}  ${c.dim}→ .claude/skills${c.reset}
+  ${c.cyan}windsurf${c.reset}     ${c.dim}→ .windsurf/skills${c.reset}
   ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
   ${c.cyan}codex${c.reset}        ${c.dim}→ .agents/skills (detected via AGENTS.md / memories)${c.reset}
   ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills${c.reset}

@@ -3,6 +3,8 @@ description: "Deployment steps, release preparation, environment setup, CI/CD gu
 agents: [devops-engineer, security-auditor]
 ---
 
+Canonical source: .kiro/skills/deploy/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check deployment history, target environments, known infrastructure, CI/CD setup, past deployment issues.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: target, steps, env details, issues, rollback notes, and infra decisions.

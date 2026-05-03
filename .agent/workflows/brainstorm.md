@@ -3,6 +3,8 @@ description: "Ideation, option generation, and feature exploration. Use when the
 agents: [project-planner, orchestrator]
 ---
 
+Canonical source: .kiro/skills/brainstorm/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Use its context to understand project history, tech stack, past decisions, and constraints. If missing, note this and create it after completing this task.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: problem, options considered, chosen direction, constraints, and new project understanding.

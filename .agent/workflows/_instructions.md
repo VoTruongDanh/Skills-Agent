@@ -3,6 +3,8 @@ description: "AI Agent Skills — auto-routing system. Analyzes every request an
 autoRun: true
 ---
 
+Canonical source: .kiro/skills/instructions.md
+
 ## AI Agent Skills — System Bootstrap
 
 This project uses an **AI Skills system** with 16 skills, 11 specialist agents, and a memory protocol.

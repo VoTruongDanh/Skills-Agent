@@ -1,7 +1,10 @@
-const { installBundle } = require('./lib/skill-bundle.js');
-const targets = ['cursor', 'antigravity', 'kiro', 'vscode', 'codex', 'claude-code'];
-const baseDir = __dirname;
-const pkg = require('./package.json');
+const path = require('path');
+
+const { installBundle } = require('../lib/skill-bundle.js');
+const targets = ['cursor', 'windsurf', 'antigravity', 'kiro', 'vscode', 'codex', 'claude-code'];
+const repoRoot = path.join(__dirname, '..');
+const baseDir = repoRoot;
+const pkg = require('../package.json');
 
 console.log('Syncing updated skills to all IDE targets...');
 for (const ide of targets) {

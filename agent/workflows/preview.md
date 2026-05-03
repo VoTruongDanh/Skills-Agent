@@ -3,6 +3,8 @@ description: "Preview expected output, UX flows, copy, interaction design, or ge
 agents: [frontend-specialist, documentation-writer]
 ---
 
+Canonical source: .kiro/skills/preview/SKILL.md
+
 ## Memory Protocol
 **START**: Read `.ai-memory.md` from project root. Check UI patterns, design decisions, existing previews, brand guidelines, and user flow notes.
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: what was previewed, assumptions, feedback, and confirmed decisions.
