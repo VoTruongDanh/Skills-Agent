@@ -1,6 +1,7 @@
 ---
 name: create
 description: "Build new features, files, components, endpoints, pages, or scripts. Use when the user wants to create something new in the codebase. Triggers: create, build, add, new, scaffold, tạo, thêm mới, tạo trang, tạo API."
+encoding: "UTF-8"
 agents: [backend-specialist, frontend-specialist, database-architect]
 related-skills: [plan, test, debug]
 ---

@@ -1,6 +1,7 @@
 ---
 name: motion-ui
 description: "Advanced Motion UI (AMUI) — Create clean, modern UI with subtle Framer Motion micro-interactions, clear states (idle/loading/success/error), consistent styling via design tokens, and smooth animations. Use when the user wants motion-rich, polished UI with micro-interactions. Triggers: motion, animation, framer motion, micro-interaction, smooth ui, amui, chuyển động, hiệu ứng mượt."
+encoding: "UTF-8"
 agents: [frontend-specialist]
 related-skills: [create, ui-ux-pro-max, enhance]
 ---

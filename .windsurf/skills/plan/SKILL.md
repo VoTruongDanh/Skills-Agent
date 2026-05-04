@@ -1,6 +1,7 @@
 ---
 name: plan
 description: "Create concrete implementation plans with milestones, task breakdowns, and estimates. Use when the user wants to plan, organize work, or create a roadmap. Triggers: plan, milestone, breakdown, roadmap, estimate, kế hoạch, lên kế hoạch, phân chia công việc."
+encoding: "UTF-8"
 agents: [project-planner, orchestrator]
 related-skills: [brainstorm, create, orchestrate]
 ---

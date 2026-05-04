@@ -1,5 +1,6 @@
 ---
 description: "Clean up junk files, temporary files, AI-generated artifacts, and caches. Use when the user wants to remove unused files, reduce repo clutter, or update .gitignore. Triggers: clean, remove junk, dọn dẹp, xoá file rác, cache."
+encoding: "UTF-8"
 agents: [devops-engineer]
 globs: ""
 alwaysApply: false

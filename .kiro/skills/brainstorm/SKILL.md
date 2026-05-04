@@ -1,6 +1,7 @@
 ---
 name: brainstorm
 description: "Ideation, option generation, and feature exploration. Use when the user wants to brainstorm ideas, explore options, compare approaches, or generate creative solutions. Triggers: brainstorm, ideate, options, ý tưởng, so sánh phương án."
+encoding: "UTF-8"
 agents: [project-planner, orchestrator]
 related-skills: [plan, create, orchestrate]
 ---

@@ -1,6 +1,7 @@
 ---
 name: test
 description: "Write tests, improve coverage, define test strategy, and add validation. Use when the user wants to test code, add unit/integration/e2e tests, or check coverage. Triggers: test, coverage, jest, vitest, playwright, spec, kiểm thử, viết test."
+encoding: "UTF-8"
 agents: [test-engineer, debugger]
 related-skills: [debug, create, enhance]
 ---

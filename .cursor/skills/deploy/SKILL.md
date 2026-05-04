@@ -1,6 +1,7 @@
 ---
 name: deploy
 description: "Deployment steps, release preparation, environment setup, CI/CD guidance, and production rollout. Use when the user wants to deploy, release, or set up infrastructure. Triggers: deploy, release, CI/CD, docker, production, triển khai, phát hành, đưa lên production."
+encoding: "UTF-8"
 agents: [devops-engineer, security-auditor]
 related-skills: [test, status, plan]
 ---

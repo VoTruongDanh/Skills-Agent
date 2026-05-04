@@ -1,6 +1,7 @@
 ---
 name: enhance
 description: "Improve existing code — refactor, optimize performance, tighten security, or enhance UX. Use when the user wants to make code better without changing its purpose. Triggers: enhance, improve, refactor, optimize, review, cải thiện, tối ưu, nhanh hơn, code dài quá."
+encoding: "UTF-8"
 agents: [performance-optimizer, security-auditor, frontend-specialist]
 related-skills: [debug, test, plan]
 ---

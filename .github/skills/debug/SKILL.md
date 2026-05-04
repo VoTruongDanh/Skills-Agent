@@ -1,6 +1,7 @@
 ---
 name: debug
 description: "Root-cause analysis for bugs, failing commands, broken behavior, and error logs. Use when the user encounters errors, crashes, or unexpected behavior. Triggers: debug, fix, bug, error, crash, lỗi, sửa lỗi, hỏng, fail."
+encoding: "UTF-8"
 agents: [debugger, backend-specialist, frontend-specialist]
 related-skills: [test, enhance, status]
 ---

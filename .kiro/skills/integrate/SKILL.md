@@ -1,6 +1,7 @@
 ---
 name: integrate
 description: "Integrate provided sample code/snippets into the existing system with minimal changes and minimal risk. Use when the user gives a code mẫu and wants to merge it into current project. Triggers: integrate, merge snippet, gộp code mẫu, ghép code, áp code mẫu vào hệ thống."
+encoding: "UTF-8"
 agents: [backend-specialist, frontend-specialist, debugger]
 related-skills: [plan, test, debug, enhance]
 ---

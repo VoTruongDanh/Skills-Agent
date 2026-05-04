@@ -1,5 +1,7 @@
 ## AI Agent Skills — System Bootstrap
 
+**Encoding rule**: All skill files, repository Markdown, and code must use UTF-8 encoding to avoid font and character issues. When producing or committing code examples, ensure files are saved as UTF-8 (no BOM) and include the front-matter field `encoding: "UTF-8"` in `SKILL.md` to document the requirement. Treat UTF-8 as the canonical encoding for the repo.
+
 This project uses an **AI Skills system** with 16 skills, 11 specialist agents, and a memory protocol.
 
 ### On EVERY request, follow this flow:

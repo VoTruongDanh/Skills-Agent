@@ -1,6 +1,7 @@
 ---
 name: explain
 description: "Explain code, walk through logic, and help understand architecture or behavior. Use when the user asks what code does, how something works, or wants a walkthrough. Triggers: explain, what does this do, how does this work, giải thích, giải thích code, code này làm gì."
+encoding: "UTF-8"
 agents: [documentation-writer, backend-specialist, frontend-specialist]
 related-skills: [debug, enhance, status]
 ---
@@ -65,6 +66,7 @@ If any answer is unclear, ASK before proceeding.
 - If the code is unclear or has issues, mention them without derailing the explanation.
 - Avoid proposing wide changes mid-explanation; if improvement requires broader edits, ASK before switching to implementation.
 - Always read and update the memory file.
+ - Code encoding: All code snippets and files referenced or produced must be UTF-8 encoded. When providing example files, ensure they use UTF-8 and indicate `encoding: "UTF-8"` in front-matter where applicable.
 
 ## Related Skills
 - `/debug` → read `.kiro/skills/debug/SKILL.md` — If explanation reveals bugs

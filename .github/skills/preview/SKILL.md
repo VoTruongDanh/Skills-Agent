@@ -1,6 +1,7 @@
 ---
 name: preview
 description: "Preview expected output, UX flows, copy, interaction design, or generated content before implementing. Use when the user wants to see what something will look like. Triggers: preview, mockup, show me, xem trước, thử xem, mô phỏng."
+encoding: "UTF-8"
 agents: [frontend-specialist, documentation-writer]
 related-skills: [create, ui-ux-pro-max, plan]
 ---

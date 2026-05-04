@@ -1,6 +1,7 @@
 ---
 name: ui-ux-pro-max
 description: "Advanced UI/UX improvements — layout, design critique, copy refinement, interaction design, accessibility, and responsive patterns. Use when the user wants professional-grade UI/UX upgrades. Triggers: ui, ux, design, layout, responsive, giao diện, thiết kế, cải thiện UI."
+encoding: "UTF-8"
 agents: [frontend-specialist, performance-optimizer]
 related-skills: [create, preview, enhance]
 ---

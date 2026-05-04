@@ -1,5 +1,6 @@
 ---
 description: "Project status summary, progress snapshots, repo overview, and outstanding work tracking. Use when the user wants to know where a project stands. Triggers: status, progress, overview, what's done, dự án đang ở đâu, tiến độ, tổng quan."
+encoding: "UTF-8"
 agents: [project-planner, orchestrator]
 globs: ""
 alwaysApply: false

@@ -1,6 +1,7 @@
 ---
 name: orchestrate
 description: "Coordinate multi-step plans across multiple roles, files, systems, or parallel workstreams. Use when the user has a complex request spanning multiple domains or needing decomposition. Triggers: orchestrate, coordinate, multi-step, full-stack, tổng hợp, làm nhiều bước."
+encoding: "UTF-8"
 agents: [orchestrator, project-planner]
 related-skills: [plan, create, deploy, test]
 ---
