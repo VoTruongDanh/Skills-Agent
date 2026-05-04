@@ -60,3 +60,6 @@ If any answer is unclear, ASK before proceeding.
 - `/debug` → read `.kiro/skills/debug/SKILL.md` — Fix issues found during enhancement
 - `/test` → read `.kiro/skills/test/SKILL.md` — Verify enhancements don't break things
 - `/plan` → read `.kiro/skills/plan/SKILL.md` — Plan large-scale refactoring
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

@@ -57,3 +57,6 @@ After completing, read `.kiro/skills/_scripts/checklist.md` for cross-cutting qu
 - `/create` → read `.kiro/skills/create/SKILL.md` — Implement the previewed design
 - `/ui-ux-pro-max` → read `.kiro/skills/ui-ux-pro-max/SKILL.md` — Advanced UI/UX design
 - `/plan` → read `.kiro/skills/plan/SKILL.md` — Plan implementation of previewed feature
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

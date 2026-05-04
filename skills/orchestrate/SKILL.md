@@ -75,3 +75,6 @@ If any answer is unclear, ASK before proceeding.
 - `/create` → read `.kiro/skills/create/SKILL.md` — Execute creation tasks
 - `/deploy` → read `.kiro/skills/deploy/SKILL.md` — Deploy completed work
 - `/test` → read `.kiro/skills/test/SKILL.md` — Validate each workstream
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

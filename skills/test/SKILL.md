@@ -60,3 +60,6 @@ If any answer is unclear, ASK before proceeding.
 - `/debug` → read `.kiro/skills/debug/SKILL.md` — Fix failing tests or bugs found
 - `/create` → read `.kiro/skills/create/SKILL.md` — Create test fixtures or helpers
 - `/enhance` → read `.kiro/skills/enhance/SKILL.md` — Improve test quality and coverage
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

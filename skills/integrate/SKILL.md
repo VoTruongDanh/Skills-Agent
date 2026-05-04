@@ -52,3 +52,6 @@ Before editing, verify these inputs exist. If any is missing or ambiguous, ASK:
 - Verification performed (commands/tests)
 - Risks / follow-ups (if any)
 
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).
+

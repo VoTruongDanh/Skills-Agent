@@ -71,3 +71,6 @@ After completing, read `.kiro/skills/_scripts/checklist.md` for cross-cutting qu
 - `/brainstorm` → read `.kiro/skills/brainstorm/SKILL.md` — Explore options before planning
 - `/create` → read `.kiro/skills/create/SKILL.md` — Execute planned tasks
 - `/orchestrate` → read `.kiro/skills/orchestrate/SKILL.md` — Coordinate complex plans across teams
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

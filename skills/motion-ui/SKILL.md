@@ -363,6 +363,9 @@ After completing, read `.kiro/skills/_scripts/checklist.md` for cross-cutting qu
 - `/ui-ux-pro-max` → read `.kiro/skills/ui-ux-pro-max/SKILL.md` — Advanced UI/UX improvements
 - `/enhance` → read `.kiro/skills/enhance/SKILL.md` — Improve existing components with motion
 
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).
+
 ## Example: AMUI Button Component
 
 ```tsx

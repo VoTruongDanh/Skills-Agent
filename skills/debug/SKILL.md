@@ -76,3 +76,6 @@ If any answer is missing, ASK before proceeding.
 - `/test` → read `.kiro/skills/test/SKILL.md` — Write tests to prevent regression
 - `/enhance` → read `.kiro/skills/enhance/SKILL.md` — Improve code quality after fixing
 - `/status` → read `.kiro/skills/status/SKILL.md` — Check project health after fix
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

@@ -67,3 +67,6 @@ If any answer is unclear, ASK before proceeding.
 - `/create` → read `.kiro/skills/create/SKILL.md` — Implement UI components
 - `/preview` → read `.kiro/skills/preview/SKILL.md` — Preview design before implementation
 - `/enhance` → read `.kiro/skills/enhance/SKILL.md` — Improve existing UI code
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).
