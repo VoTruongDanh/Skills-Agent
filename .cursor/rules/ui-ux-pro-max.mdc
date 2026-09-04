@@ -55,6 +55,8 @@ If any answer is unclear, ASK before proceeding.
 
 - [ ] Clean code chuẩn (Standard clean code applied)
 - [ ] Cập nhật đầy đủ tất cả các file liên quan (All related files fully updated)
+- [ ] Cấm màu gradient (No gradient colors — solid/flat colors only)
+- [ ] Cấm icon màu (No colored icons — monochrome / single-color only)
 
 ## Rules
 - Optimize for clarity before decoration.
@@ -62,8 +64,14 @@ If any answer is unclear, ASK before proceeding.
 - Include empty, loading, error, and success states when relevant.
 - Avoid widespread redesigns unless asked; prioritize small, safe diffs and ASK before large UI rewrites.
 - Always read and update the memory file.
+- **Quy luật bắt buộc (Mandatory Rules):**
+  - **Cấm màu gradient:** Tuyệt đối KHÔNG sử dụng màu gradient (`linear-gradient`, `radial-gradient`, `conic-gradient`, CSS gradient generator, v.v.). Chỉ sử dụng màu đơn sắc, màu phẳng (solid / flat colors) để đảm bảo tính tối giản, tương phản rõ ràng và tính nhất quán cao.
+  - **Cấm icon màu:** Tuyệt đối KHÔNG sử dụng icon nhiều màu sắc (multicolor), icon 3D tô màu hoặc emoji màu trong giao diện UI. Chỉ sử dụng icon đơn sắc (monochrome / single-tone icons), đồng bộ với màu text hoặc màu chủ đạo của hệ thống qua `currentColor` hoặc mã màu đơn sắc được quy định.
 
 ## Related Skills
 - `/create` → read `.kiro/skills/create/SKILL.md` — Implement UI components
 - `/preview` → read `.kiro/skills/preview/SKILL.md` — Preview design before implementation
 - `/enhance` → read `.kiro/skills/enhance/SKILL.md` — Improve existing UI code
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

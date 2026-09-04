@@ -59,3 +59,6 @@ After completing, read `.kiro/skills/_scripts/verify-all.md` for full project ve
 - `/plan` → read `.kiro/skills/plan/SKILL.md` — Create plan for incomplete items
 - `/debug` → read `.kiro/skills/debug/SKILL.md` — Investigate flagged risks
 - `/deploy` → read `.kiro/skills/deploy/SKILL.md` — Deploy when ready
+
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).

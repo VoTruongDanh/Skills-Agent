@@ -80,6 +80,9 @@ Proceed with deletion? (y/n)
 ## Quality Gate
 After completing, read `.kiro/skills/_scripts/checklist.md` for cross-cutting quality checks.
 
+## Encoding
+All code snippets and example files referenced or produced by this skill must be UTF-8 encoded. When applicable, include `encoding: "UTF-8"` in SKILL.md front-matter and ensure saved files use UTF-8 (no BOM).
+
 ## Follow-up Actions
 - Update .gitignore to prevent future junk accumulation
 - Suggest cleanup scripts for recurring patterns
