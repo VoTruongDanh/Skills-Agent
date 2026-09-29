@@ -1,6 +1,6 @@
 ---
 name: ui-ux-pro-max
-description: "Advanced UI/UX improvements — layout, design critique, copy refinement, interaction design, accessibility, and responsive patterns. Use when the user wants professional-grade UI/UX upgrades. Triggers: ui, ux, design, layout, responsive, giao diện, thiết kế, cải thiện UI."
+description: "Advanced UI/UX improvements — layout, design critique, copy refinement, interaction design, accessibility, design systems, and responsive patterns. Use when the user wants professional-grade UI/UX upgrades. Triggers: ui, ux, design, layout, responsive, giao diện, thiết kế, cải thiện UI, bento grid, typography, type scale, wcag, accessibility, tokens, shadcn, state matrix, empty state, anti slop, microcopy."
 encoding: "UTF-8"
 agents: [frontend-specialist, performance-optimizer]
 related-skills: [create, preview, enhance]
@@ -11,7 +11,7 @@ related-skills: [create, preview, enhance]
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: UI/UX changes, patterns used, a11y improvements, and brand consistency notes.
 
 ## Goal
-Upgrade the product experience with clear, practical UI/UX improvements.
+Upgrade the product experience with clear, practical, accessible, and high-performance UI/UX improvements using a unified progressive-disclosure knowledge base.
 
 ## Agent Routing
 - Primary → read `.kiro/skills/agents/agents/frontend-specialist.md` and apply its knowledge
@@ -26,14 +26,57 @@ Before improving UI/UX, verify:
 3. Are there existing design guidelines or component library?
 If any answer is unclear, ASK before proceeding.
 
+## Reference Routing Index (Bảng Điều Hướng Tham Chiếu Chuyên Sâu)
+When addressing specific UI/UX domains, consult the detailed guides in the `references/` directory:
+
+| Nhiệm vụ / Ngữ cảnh người dùng | Tài liệu tham chiếu chi tiết cần đọc |
+| :--- | :--- |
+| **Thiết kế tổng thể, chống UI cẩu thả, tối giản** | Đọc `references/1-anti-slop-design.md` |
+| **Khả năng truy cập WCAG 2.2 AA, điều hướng phím, ARIA** | Đọc `references/2-wcag-accessibility.md` |
+| **Cỡ chữ, thang tỉ lệ toán học, line-height, fluid font** | Đọc `references/3-typography-scale.md` |
+| **Bố cục Bento Grid, nhịp 8px, khoảng cách, responsive** | Đọc `references/4-bento-grid-layout.md` |
+| **Ma trận 8 trạng thái (Empty, Loading, Error, Focus...)** | Đọc `references/5-component-state-matrix.md` |
+| **Hệ thống Token ngữ nghĩa, CSS variables, Dark Mode** | Đọc `references/6-tokens-and-shadcn.md` |
+| **Tối ưu Form, Bảng dữ liệu (Table), Micro-copy** | Đọc `references/7-form-and-ux-audit.md` |
+
+## Core UI/UX Framework (Tóm Tắt 7 Trụ Cột Cốt Lõi)
+
+### 1. Anti-UI Slop & Subtractive Design
+- Học DNA thiết kế trước khi bắt tay vào code; loại bỏ các container thừa và viền lồng nhau vô nghĩa.
+- **Quy tắc bất biến:** Tuyệt đối cấm màu gradient (chỉ dùng solid/flat colors) và cấm icon nhiều màu (chỉ dùng monochrome single-tone icons).
+
+### 2. WCAG 2.2 Level AA Accessibility
+- Độ tương phản tối thiểu: 4.5:1 cho văn bản thường, 3.0:1 cho UI components và icon chức năng.
+- Bắt buộc có `:focus-visible` (outline 2px solid với offset 2px). Hỗ trợ đầy đủ điều hướng phím Tab và bẫy focus trong Modal.
+
+### 3. Mathematical Type Scale
+- Sử dụng thang tỉ lệ chuẩn (Major Third 1.25 hoặc Perfect Fourth 1.333).
+- Áp dụng quy luật nghịch đảo: font càng to thì line-height càng hẹp (`1.1 - 1.25`), body text cần line-height thoáng (`1.5 - 1.65`).
+
+### 4. Bento Grid & 8px Rhythm
+- Sử dụng hệ thống khoảng cách bội số 8px/4px (`space-1` = 4px, `space-2` = 8px, `space-4` = 16px, `space-8` = 32px...).
+- Bố cục Bento Grid bất đối xứng có chủ đích, xác định rõ phần tử Hero, cam kết không cắt xén nội dung quan trọng (Zero-crop).
+
+### 5. 8-State Component Matrix
+- Mọi component bắt buộc cover đủ 8 trạng thái: *Default, Hover, Focus-visible, Active/Pressed, Loading/Skeleton, Disabled, Error, Empty State*.
+
+### 6. Semantic Tokens Architecture
+- Sử dụng CSS custom properties cho theme (`--background`, `--foreground`, `--primary`, `--muted`, `--border`, `--radius`).
+- Đồng bộ cặp surface/foreground, hỗ trợ Light/Dark mode tự nhiên và tương thích cao với Tailwind/Shadcn.
+
+### 7. Form Usability & Micro-copy
+- Nhãn trường (Label) luôn nằm trên ô nhập liệu; không dùng placeholder thay thế label; form bố cục 1 cột.
+- Bảng dữ liệu: Chữ căn lề trái, số căn lề phải; micro-copy ngắn gọn, dùng động từ cụ thể trên nút bấm, không đổ lỗi cho người dùng.
+
 ## Workflow
 1. **Read Memory** — Load `.ai-memory.md` for design history and UI patterns.
 2. Identify the screen, flow, or component being improved.
-3. Evaluate hierarchy, spacing, clarity, accessibility, states, feedback, and conversion friction.
-4. Recommend concrete improvements with rationale.
-5. When asked to implement, favor polished but maintainable UI.
-6. **Quality Gate** — Read `.kiro/skills/_scripts/checklist.md` and verify all states and accessibility.
-7. **Update Memory** — Save UI/UX decisions and patterns to `.ai-memory.md`.
+3. Consult the appropriate document in `references/` via the Reference Routing Index.
+4. Evaluate hierarchy, spacing, clarity, accessibility, states, feedback, and conversion friction.
+5. Recommend concrete improvements with rationale.
+6. When asked to implement, favor polished but maintainable UI.
+7. **Quality Gate** — Read `.kiro/skills/_scripts/checklist.md` and verify all states and accessibility.
+8. **Update Memory** — Save UI/UX decisions and patterns to `.ai-memory.md`.
 
 ## Output format
 - UX issues found
@@ -46,9 +89,9 @@ If any answer is unclear, ASK before proceeding.
 ## Checklist
 - [ ] Target screen/component identified
 - [ ] Hierarchy and spacing evaluated
-- [ ] Accessibility checked (WCAG)
-- [ ] All states covered (empty, loading, error, success)
-- [ ] Mobile responsiveness considered
+- [ ] Accessibility checked (WCAG 2.2 AA)
+- [ ] All 8 states covered (empty, loading, error, success, hover, focus, disabled, active)
+- [ ] Mobile responsiveness considered (Breakpoints & 44px touch targets)
 - [ ] Performance impact assessed
 - [ ] Brand consistency maintained
 - [ ] Memory file updated
