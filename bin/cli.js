@@ -187,7 +187,7 @@ async function interactiveInit() {
     { label: 'Kiro', value: 'kiro', description: '.kiro/skills' },
     { label: 'Claude Code', value: 'claude-code', description: '.claude/skills' },
     { label: 'Windsurf', value: 'windsurf', description: '.windsurf/skills' },
-    { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows' },
+    { label: 'Antigravity', value: 'antigravity', description: '.agent/workflows + .agent/skills' },
     { label: 'Codex', value: 'codex', description: '.agents/skills (+ AGENTS.md / memories)' },
     { label: 'VS Code', value: 'vscode', description: '.github/skills' },
     { label: 'GitHub Copilot', value: 'copilot', description: '.github/skills' },
@@ -803,7 +803,7 @@ ${c.bold}Supported IDEs:${c.reset}
   ${c.cyan}kiro${c.reset}         ${c.dim}→ .kiro/skills${c.reset}
   ${c.cyan}claude-code${c.reset}  ${c.dim}→ .claude/skills${c.reset}
   ${c.cyan}windsurf${c.reset}     ${c.dim}→ .windsurf/skills${c.reset}
-  ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows${c.reset}
+  ${c.cyan}antigravity${c.reset}  ${c.dim}→ .agent/workflows + .agent/skills${c.reset}
   ${c.cyan}codex${c.reset}        ${c.dim}→ .agents/skills (detected via AGENTS.md / memories)${c.reset}
   ${c.cyan}vscode${c.reset}       ${c.dim}→ .github/skills${c.reset}
   ${c.cyan}copilot${c.reset}      ${c.dim}→ .github/skills${c.reset}

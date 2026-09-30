@@ -56,6 +56,9 @@ Sau khi push tag, vào GitHub repo:
 | `npm run release:minor` | Tính năng mới, tương thích ngược | 1.0.0 → 1.1.0 |
 | `npm run release:major` | Breaking changes | 1.0.0 → 2.0.0 |
 
+npm publish --access public
+
+
 ## Cách người dùng cập nhật
 
 Sau khi bạn publish, người dùng có thể cập nhật bằng:
