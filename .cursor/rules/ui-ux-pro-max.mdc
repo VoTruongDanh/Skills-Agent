@@ -11,7 +11,7 @@ alwaysApply: false
 **END**: Update `.ai-memory.md` using **Memory Compaction Rules** with: UI/UX changes, patterns used, a11y improvements, and brand consistency notes.
 
 ## Goal
-Upgrade the product experience with clear, practical, accessible, and high-performance UI/UX improvements using a unified progressive-disclosure knowledge base.
+Upgrade the product experience with clear, practical, accessible, and high-performance UI/UX improvements using a unified progressive-disclosure knowledge base referencing original specialized guides.
 
 ## Agent Routing
 - Primary → read `.kiro/skills/agents/agents/frontend-specialist.md` and apply its knowledge
@@ -26,70 +26,81 @@ Before improving UI/UX, verify:
 3. Are there existing design guidelines or component library?
 If any answer is unclear, ASK before proceeding.
 
-## Reference Routing Index (Bảng Điều Hướng Tham Chiếu Chuyên Sâu)
-When addressing specific UI/UX domains, consult the detailed guides in the `references/` directory:
+## Reference Routing Index
+When addressing specific UI/UX domains, consult the corresponding original guides in `references/`:
 
-| Nhiệm vụ / Ngữ cảnh người dùng | Tài liệu tham chiếu chi tiết cần đọc |
-| :--- | :--- |
-| **Thiết kế tổng thể, chống UI cẩu thả, tối giản** | Đọc `references/1-anti-slop-design.md` |
-| **Khả năng truy cập WCAG 2.2 AA, điều hướng phím, ARIA** | Đọc `references/2-wcag-accessibility.md` |
-| **Cỡ chữ, thang tỉ lệ toán học, line-height, fluid font** | Đọc `references/3-typography-scale.md` |
-| **Bố cục Bento Grid, nhịp 8px, khoảng cách, responsive** | Đọc `references/4-bento-grid-layout.md` |
-| **Ma trận 8 trạng thái (Empty, Loading, Error, Focus...)** | Đọc `references/5-component-state-matrix.md` |
-| **Hệ thống Token ngữ nghĩa, CSS variables, Dark Mode** | Đọc `references/6-tokens-and-shadcn.md` |
-| **Tối ưu Form, Bảng dữ liệu (Table), Micro-copy** | Đọc `references/7-form-and-ux-audit.md` |
+### 1. Design Philosophy, Anti-Slop & Creative Direction
+- `references/anti-ui-slop.md` — Extract design DNA, avoid generic AI slop and predictable SaaS patterns.
+- `references/subtractive-design.md` — Eliminate unnecessary decoration, containers, and visual noise.
+- `references/better-interface.md` — Core interface affordances and visual clarity principles.
+- `references/modern-saas-design-audit.md` — Auditing SaaS interfaces against contemporary web standards.
+- `references/structured-saas-dev-tool-ui.md` — High-density, developer-focused UI layouts and ergonomics.
+- `references/senior-design-review.md` & `references/design-critique-ai-design-reviewer.md` — Systematic critique frameworks.
 
-## Core UI/UX Framework (Tóm Tắt 7 Trụ Cột Cốt Lõi)
+### 2. Typography & Hierarchy
+- `references/type-scale.md` & `references/make-a-type-scale.md` — Mathematical modular type scales (Major Third / Perfect Fourth).
+- `references/font-pairings.md` — Curated typographic pairings, body/display contrast ratios.
 
-### 1. Anti-UI Slop & Subtractive Design
-- Học DNA thiết kế trước khi bắt tay vào code; loại bỏ các container thừa và viền lồng nhau vô nghĩa.
-- **Quy tắc bất biến:** Tuyệt đối cấm màu gradient (chỉ dùng solid/flat colors) và cấm icon nhiều màu (chỉ dùng monochrome single-tone icons).
+### 3. Colors, Tokens & Theming
+- `references/shadcn-theme-variables.md` & `references/shadcn-component-structure.md` — CSS variable theming and Shadcn/Tailwind conventions.
+- `references/token-coverage.md` & `references/import-tokens.md` — Token taxonomy, surface/foreground pairs.
+- `references/build-a-variable-library.md` & `references/apply-color-variables.md` — Design system variable architectures.
+- `references/dark-mode-converter.md` — Light/dark theme mirroring, elevation, and contrast preservation.
+- `references/wcag-palette.md` — Accessible palette generation meeting WCAG contrast thresholds.
 
-### 2. WCAG 2.2 Level AA Accessibility
-- Độ tương phản tối thiểu: 4.5:1 cho văn bản thường, 3.0:1 cho UI components và icon chức năng.
-- Bắt buộc có `:focus-visible` (outline 2px solid với offset 2px). Hỗ trợ đầy đủ điều hướng phím Tab và bẫy focus trong Modal.
+### 4. Layout, Bento Grid & Responsive Design
+- `references/bento-grid-layout.md` & `references/bento-board-ui.md` — Content-led Bento Grid layouts with zero-crop hero detection.
+- `references/responsive-design.md` & `references/responsive-design-checker.md` — Viewport fluidity, container widths, breakpoints.
+- `references/responsive-breakpoint-adapter.md` & `references/mobile-breakpoint.md` — Mobile-first adaptation rules.
+- `references/desktop-to-mobile.md` — Converting complex desktop views into clean mobile stacks.
+- `references/container-layout-normalizer.md` & `references/spacing-audit.md` — 4px/8px rhythm normalization.
+- `references/fluid-design.md` — Modern CSS clamp() and fluid sizing.
 
-### 3. Mathematical Type Scale
-- Sử dụng thang tỉ lệ chuẩn (Major Third 1.25 hoặc Perfect Fourth 1.333).
-- Áp dụng quy luật nghịch đảo: font càng to thì line-height càng hẹp (`1.1 - 1.25`), body text cần line-height thoáng (`1.5 - 1.65`).
+### 5. Component Architecture & State Coverage
+- `references/state-matrix-generator.md` — Deterministic state matrix generation for components.
+- `references/empty-loading-error-state-generator.md` & `references/empty-state-generator.md` — Full coverage for empty and async states.
+- `references/generate-8-states.md` — Enforcing the 8 fundamental states (Default, Hover, Active, Focus, Loading, Disabled, Error, Empty).
+- `references/state-coverage-flow-audit.md` & `references/ui-state-expander.md` — Validating state transition coverage across user journeys.
+- `references/component-audit.md` & `references/component-quality-review.md` & `references/lean-components-review.md` — Component reusability and surface reviews.
 
-### 4. Bento Grid & 8px Rhythm
-- Sử dụng hệ thống khoảng cách bội số 8px/4px (`space-1` = 4px, `space-2` = 8px, `space-4` = 16px, `space-8` = 32px...).
-- Bố cục Bento Grid bất đối xứng có chủ đích, xác định rõ phần tử Hero, cam kết không cắt xén nội dung quan trọng (Zero-crop).
+### 6. Accessibility (WCAG 2.2 Level AA)
+- `references/wcag-2-2-web.md` — Definitive WCAG 2.2 Level AA requirements for web prototypes and code.
+- `references/a11y-wcag-fixer.md` & `references/a11y-quickcheck.md` — Rapid remediation of common accessibility defects.
+- `references/accessibility-checker.md` & `references/accessibility-review.md` — Audit checklists for keyboard, focus, and contrast.
+- `references/accessible-ux-writing.md` — Screen-reader-friendly microcopy and descriptive links.
+- `references/ai-a11y-toolkit-wcag-22-aa.md` & `references/annotate-aria-landmarks.md` — Proper landmark, region, and role annotations.
 
-### 5. 8-State Component Matrix
-- Mọi component bắt buộc cover đủ 8 trạng thái: *Default, Hover, Focus-visible, Active/Pressed, Loading/Skeleton, Disabled, Error, Empty State*.
-
-### 6. Semantic Tokens Architecture
-- Sử dụng CSS custom properties cho theme (`--background`, `--foreground`, `--primary`, `--muted`, `--border`, `--radius`).
-- Đồng bộ cặp surface/foreground, hỗ trợ Light/Dark mode tự nhiên và tương thích cao với Tailwind/Shadcn.
-
-### 7. Form Usability & Micro-copy
-- Nhãn trường (Label) luôn nằm trên ô nhập liệu; không dùng placeholder thay thế label; form bố cục 1 cột.
-- Bảng dữ liệu: Chữ căn lề trái, số căn lề phải; micro-copy ngắn gọn, dùng động từ cụ thể trên nút bấm, không đổ lỗi cho người dùng.
+### 7. Forms, Usability, Tables & Micro-copy
+- `references/form-audit.md` — Form structural analysis (labels, inline validation, layout ordering, required marks).
+- `references/ux-audit.md` & `references/saas-ux-review.md` — Comprehensive heuristic usability evaluation.
+- `references/micro-copy-polisher.md` & `references/stress-test-copy.md` — Clear, actionable, non-blaming UI copy.
+- `references/checkout-ux-review.md` & `references/signup-flow-review.md` — High-conversion, low-friction onboarding and checkout flows.
+- `references/button-size-check.md` — Touch target compliance (minimum 44x44px touch targets).
+- `references/ui-consistency-checker.md` — Cross-screen design alignment and style drift detection.
 
 ## Workflow
 1. **Read Memory** — Load `.ai-memory.md` for design history and UI patterns.
-2. Identify the screen, flow, or component being improved.
-3. Consult the appropriate document in `references/` via the Reference Routing Index.
-4. Evaluate hierarchy, spacing, clarity, accessibility, states, feedback, and conversion friction.
+2. Identify the target screen, component, or user flow being improved.
+3. Consult the appropriate detailed reference files in `references/` via the Reference Routing Index above.
+4. Evaluate hierarchy, spacing, contrast, accessibility, states, feedback, and conversion friction.
 5. Recommend concrete improvements with rationale.
-6. When asked to implement, favor polished but maintainable UI.
+6. When asked to implement, favor polished, intentional, and maintainable UI code.
 7. **Quality Gate** — Read `.kiro/skills/_scripts/checklist.md` and verify all states and accessibility.
 8. **Update Memory** — Save UI/UX decisions and patterns to `.ai-memory.md`.
 
-## Output format
+## Output Format
 - UX issues found
-- Visual issues found
+- Visual & layout issues found
 - Recommended changes (prioritized)
-- Accessibility notes (WCAG compliance)
-- Implementation priorities
-- Component states covered (empty, loading, error, success)
+- Accessibility notes (WCAG 2.2 AA compliance)
+- Component states covered (Default, Loading, Empty, Error, Hover, Focus, Active, Disabled)
+- Implementation plan and code changes
 
 ## Checklist
 - [ ] Target screen/component identified
-- [ ] Hierarchy and spacing evaluated
-- [ ] Accessibility checked (WCAG 2.2 AA)
+- [ ] Relevant `references/*.md` guide consulted
+- [ ] Hierarchy and spacing evaluated (4px/8px rhythm)
+- [ ] Accessibility checked (WCAG 2.2 AA, 4.5:1 contrast, :focus-visible)
 - [ ] All 8 states covered (empty, loading, error, success, hover, focus, disabled, active)
 - [ ] Mobile responsiveness considered (Breakpoints & 44px touch targets)
 - [ ] Performance impact assessed
